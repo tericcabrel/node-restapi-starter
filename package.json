@@ -20,6 +20,8 @@
     "@types/node": "^12.6.6",
     "nodemon": "^1.19.1",
     "ts-node-dev": "^1.0.0-pre.40",
+    "tslint": "^5.18.0",
+    "tslint-config-airbnb": "^5.11.1",
     "typescript": "^3.5.3"
   }
 }
