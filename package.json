@@ -1,0 +1,25 @@
+{
+  "name": "node_restapi_starter",
+  "version": "1.0.0",
+  "description": "A starter to build REST API with NodeJS and Typescript",
+  "main": "./build/index.js",
+  "scripts": {
+    "tsc": "tsc",
+    "watch": "nodemon --watch '*.ts' --exec 'ts-node' ./app/index.ts",
+    "dev": "ts-node-dev --respawn --transpileOnly ./app/index.ts",
+    "prod": "tsc && node ./build/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/suprageek/node-restapi-starter.git"
+  },
+  "author": "Eric Cabrel TIOGO <tericcabrel@yahoo.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^12.6.6",
+    "nodemon": "^1.19.1",
+    "ts-node-dev": "^1.0.0-pre.40",
+    "typescript": "^3.5.3"
+  }
+}
