@@ -17,11 +17,15 @@
   "author": "Eric Cabrel TIOGO <tericcabrel@yahoo.com>",
   "license": "ISC",
   "devDependencies": {
+    "@types/dotenv": "^6.1.1",
     "@types/node": "^12.6.6",
     "nodemon": "^1.19.1",
     "ts-node-dev": "^1.0.0-pre.40",
     "tslint": "^5.18.0",
     "tslint-config-airbnb": "^5.11.1",
     "typescript": "^3.5.3"
+  },
+  "dependencies": {
+    "dotenv": "^8.0.0"
   }
 }
