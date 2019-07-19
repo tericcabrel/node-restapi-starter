@@ -2,22 +2,9 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-let path;
-switch (process.env.NODE_ENV) {
-  case "test":
-    path = `${__dirname}/../../envs/.env.test`;
-    break;
-  case "prod":
-    path = `${__dirname}/../../envs/.env.prod`;
-    break;
-  default:
-    path = `${__dirname}/../../envs/.env.dev`;
-}
-
-dotenv.config({ path: path });
-
 const e = process.env;
 
+const ENV = e.NODE_ENV || '';
 const BASE_URL = e.BASE_URL || '';
 const SERVER_PORT = parseInt(e.SERVER_PORT || '7010');
 const APP_NAME = e.APP_NAME || '';
@@ -47,7 +34,7 @@ const CONFIRM_ACCOUNT_PATH = e.CONFIRM_ACCOUNT_PATH || '';
 
 
 export {
-  BASE_URL, SERVER_PORT, APP_NAME, APP_VERSION, API_BASE, DEFAULT_TIMEZONE, AUTH_ENABLED, JWT_SECRET, JWT_EXPIRE,
+  ENV, BASE_URL, SERVER_PORT, APP_NAME, APP_VERSION, API_BASE, DEFAULT_TIMEZONE, AUTH_ENABLED, JWT_SECRET, JWT_EXPIRE,
   JWT_EMAIL_SECRET, JWT_EMAIL_EXPIRE, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, DB_AUTH, LOG_FILE_NAME,
   LOG_FILE_DIR, MAIL_USERNAME, MAIL_PASSWORD, MAIL_HOST, MAIL_PORT, WEB_APP_URL, RESET_PASSWORD_PATH,
   CONFIRM_ACCOUNT_PATH
