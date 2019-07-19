@@ -1,6 +1,28 @@
+import * as http from 'http';
+import express, { Application } from 'express';
 import * as config from './core/config';
 
-console.log('Hello Type!');
-console.log('Test watch!');
+import Routes from "./routes";
+import Locale from "./core/locale";
+import Logger from "./core/logger";
+import dbConnection from "./core/db/connect";
 
-console.log('Config => ', config);
+const port: number = config.SERVER_PORT;
+
+const app: Application = express();
+
+// Cron.init();
+Routes.init(app);
+
+const server: http.Server = http.createServer(app);
+
+server.listen(port, async() => {
+  await dbConnection();
+
+  (new Locale());
+
+  Logger.info(`Server started - ${port}`);
+});
+
+
+export default server;

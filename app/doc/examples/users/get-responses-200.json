@@ -1,0 +1,14 @@
+[
+    {
+      "user_id": "9llee3d0e-dd36-4a44-b71a-70lkh7c7f077",
+      "email": "ulrich@example.com",
+      "name" : "ulrich",
+      "username" : "ntella"
+    },
+    {
+      "user_id": "99ee3d0e-dd36-4a44-b71a-70b8b7c7f077",
+      "email": "rodrique@example.com",
+      "name" : "Rodrigue",
+      "username" : "Taje"
+    }
+]

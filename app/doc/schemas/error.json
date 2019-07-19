@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://solutionspark.com/staging/nigeria-stocks/api-doc/schemas/",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "integer",
+      "description": "Error unique identifier code."
+    },
+    "description": {
+      "type": "string",
+      "description": "Explanatory error description message."
+    }
+  },
+  "required": ["code", "description"]
+}

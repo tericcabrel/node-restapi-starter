@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://localhost/the-news/api-doc/schemas/",
+  "type": "object",
+  "properties": {
+    "auth": {
+      "type": "boolean",
+      "description": "Response status auth."
+    },
+    "user_id": {
+      "type": "string",
+      "description": "User user_id."
+    },
+    "token": {
+      "type": "string",
+      "description": "User token."
+    }
+  },
+  "required": ["auth", "user_id", "token"]
+}

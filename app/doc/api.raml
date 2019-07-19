@@ -1,0 +1,598 @@
+#%RAML 1.0
+title: Variance
+baseUri: http://localhost:5991/api/{version}
+version: v1
+
+traits:
+  paged: !include traits/paged.yml
+resourceTypes:
+   controller:
+      description: |
+        Specific action that doesn't map to standard CRUD operations.
+      post:
+        description: |
+          Execute the action.
+        responses:
+          200:
+            description: |
+              The request was successfully completed.
+          400:
+            description: |
+              The request completion failed. The description should provide detailed explanation of the reason.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 400,
+                    "description": "Invalid object ID."
+                  }
+          403:
+            description: |
+              The request is forbidden due to missing  permissions.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 403,
+                    "description": "You do not have permissions for that request.."
+                  }
+          404:
+            description: |
+              The request URI does not match a resource in the API.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 404,
+                    "description": "Invalid request URI."
+                  }
+          406:
+            description: |
+              The client requested data in a format different from application/json.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 406,
+                    "description": "API returns data only in application/json format."
+                  } 
+          500:
+            description: |
+              A server internal prevents the error to complete.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 500,
+                    "description": "A server internal error occurs. Please contact us ."
+                  }
+   collection:
+      description: |
+        Collection of <<resourcePathName>>.
+      get:
+        description: |
+          Retrieve a list of <<resourcePathName>>.
+        responses:
+          200:
+            description: |
+              List of <<resourcePathName>>.
+          400:
+            description: |
+              The request completion failed. The description should provide detailed explanation of the reason.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 400,
+                    "description": "Invalid object ID."
+                  }
+          403:
+            description: |
+              The request is forbidden due to missing  permissions.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 403,
+                    "description": "You do not have permissions for that request.."
+                  }
+          404:
+            description: |
+              The request URI does not match a resource in the API.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 404,
+                    "description": "Invalid request URI."
+                  }
+          406:
+            description: |
+              The client requested data in a format different from application/json.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 406,
+                    "description": "API returns data only in application/json format."
+                  } 
+          500:
+            description: |
+              A server internal error occurred.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 500,
+                    "description": "A server internal error occurs. Please contact us ."
+                  }
+      post:
+        description: |
+          Create a new <<resourcePathName | !singularize>> in the collection.
+        responses:
+          201:
+            description: |
+              A new <<resourcePathName | !singularize>> has been created in the collection.
+          400:
+            description: |
+              The request completion failed. The description should provide detailed explanation of the reason.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 400,
+                    "description": "Invalid object ID."
+                  }
+          403:
+            description: |
+              The request is forbidden due to missing  permissions.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 403,
+                    "description": "You do not have permissions for that request.."
+                  }
+          404:
+            description: |
+              The request URI does not match a resource in the API.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 404,
+                    "description": "Invalid request URI."
+                  }
+          406:
+            description: |
+              The client requested data in a format different from application/json.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 406,
+                    "description": "API returns data only in application/json format."
+                  } 
+          500:
+            description: |
+              A server internal error occurred.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 500,
+                    "description": "A server internal error occurs. Please contact us ."
+                  }
+   item:
+      description: |
+        Storage of <<resourcePathName>>.
+      securedBy: ["jwt"]
+      get:
+        description: |
+          Retrieve a list of <<resourcePathName>>.
+        responses:
+          200:
+            description: |
+              List of <<resourcePathName>>.
+          400:
+            description: |
+              The request completion failed. The description should provide detailed explanation of the reason.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 400,
+                    "description": "Invalid object ID."
+                  }
+          403:
+            description: |
+              The request is forbidden due to missing  permissions.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 403,
+                    "description": "You do not have permissions for that request.."
+                  }
+          404:
+            description: |
+              The request URI does not match a resource in the API.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 404,
+                    "description": "Invalid request URI."
+                  }
+          406:
+            description: |
+              The client requested data in a format different from application/json.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 406,
+                    "description": "API returns data only in application/json format."
+                  } 
+          500:
+            description: |
+              A server internal error occurred.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 500,
+                    "description": "A server internal error occurs. Please contact us ."
+                  }
+      post:
+        description: |
+          Add a new <<resourcePathName | !singularize>> in the store.
+        responses:
+          201:
+            description: |
+              A new <<resourcePathName | !singularize>> has been added in the store.
+          400:
+            description: |
+              The request completion failed. The description should provide detailed explanation of the reason.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 400,
+                    "description": "Invalid object ID."
+                  }
+          403:
+            description: |
+              The request is forbidden due to missing  permissions.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 403,
+                    "description": "You do not have permissions for that request.."
+                  }
+          404:
+            description: |
+              The request URI does not match a resource in the API.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 404,
+                    "description": "Invalid request URI."
+                  }
+          406:
+            description: |
+              The client requested data in a format different from application/json.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 406,
+                    "description": "API returns data only in application/json format."
+                  } 
+          500:
+            description: |
+              A server internal error occurred.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 500,
+                    "description": "A server internal error occurs. Please contact us ."
+                  }
+   document:
+      description: |
+        Representation of <<resourcePathName|!singularize>> entity.
+      securedBy: ["jwt"]
+      get:
+        description: |
+          Retrieve a <<resourcePathName|!singularize>> entity.
+        responses:
+          200:
+            description: |
+              The representation of a <<resourcePathName|!singularize>> entity.
+          400:
+            description: |
+              The request completion failed. The description should provide detailed explanation of the reason.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 400,
+                    "description": "Invalid object ID."
+                  }
+          403:
+            description: |
+              The request is forbidden due to missing  permissions.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 403,
+                    "description": "You do not have permissions for that request.."
+                  }
+          404:
+            description: |
+              The request URI does not match a resource in the API.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 404,
+                    "description": "Invalid request URI."
+                  }
+          406:
+            description: |
+              The client requested data in a format different from application/json.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 406,
+                    "description": "API returns data only in application/json format."
+                  } 
+          500:
+            description: |
+              A server internal error occurred.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 500,
+                    "description": "A server internal error occurs. Please contact us ."
+                  }
+      put:
+        description: |
+          Update a <<resourcePathName|!singularize>> entity.
+        responses:
+          200:
+            description: |
+              The representation of a <<resourcePathName|!singularize>> entity.
+          400:
+            description: |
+              The request completion failed. The description should provide detailed explanation of the reason.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 400,
+                    "description": "Invalid object ID."
+                  }
+          403:
+            description: |
+              The request is forbidden due to missing  permissions.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 403,
+                    "description": "You do not have permissions for that request.."
+                  }
+          404:
+            description: |
+              The request URI does not match a resource in the API.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 404,
+                    "description": "Invalid request URI."
+                  }
+          406:
+            description: |
+              The client requested data in a format different from application/json.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 406,
+                    "description": "API returns data only in application/json format."
+                  } 
+          500:
+            description: |
+              A server internal error occurred.
+            body:
+              application/json:
+                schema: error
+                example: |
+                  {
+                    "code": 500,
+                    "description": "A server internal error occurs. Please contact us "
+                  }
+
+
+types:
+   error: !include schemas/error.json
+securitySchemes: 
+   jwt: !include security/jwt.yml
+
+/users:
+  type: collection
+  post:
+    description: |
+      Add a new user.
+      Allowed roles: Guest.
+    body:
+      application/json:
+        type: !include schemas/users/post-body.json
+        example: !include examples/users/post-body.json
+    responses:
+      200:
+        description: |
+          Not returned! Please see status 201.
+      201:
+        description: |
+          The user has been created.
+        body:
+          application/json:
+            type: !include schemas/users/post-responses-201.json
+            example: !include examples/users/post-responses-201.json
+  get:
+    description: |
+      Retrieve a list of users.
+    is: ["paged"]
+    responses:
+      200:
+        description: |
+          A list of users.
+        body:
+          application/json:
+            type: !include schemas/users/get-responses-200.json
+            example: !include examples/users/get-responses-200.json
+  /{userId}:
+    type: document
+    put:
+      description: |
+        Update user info.
+        Allowed roles: Member (owner).
+      body:
+        application/json:
+          type: !include schemas/users/user/put-body.json
+          example: !include examples/users/user/put-body.json
+      responses:
+        200:
+          description: |
+            The user info have been updated.
+          body:
+            application/json:
+              type: !include schemas/users/user/get-responses-200.json
+              example: !include examples/users/user/get-responses-200.json
+    get:
+      description: |
+        Retrieve a given user.
+        Allowed roles: Member (Owner).
+      responses:
+        200:
+          description: |
+            The user.
+          body:
+            application/json:
+              type: !include schemas/users/user/get-responses-200.json
+              example: !include examples/users/user/get-responses-200.json
+    delete:
+      description: |
+        delete a given user.
+        Allowed roles: Member (Owner).
+      responses:
+        200:
+          description: |
+            The user.
+          body:
+            application/json:
+              type: !include schemas/users/user/delete-responses-200.json
+              example: !include examples/users/user/delete-responses-200.json
+          
+
+/auth:
+    /login:
+      type: controller
+      post:
+        description: |
+          Proceed a user authentication in order to get  an access token for secured requests.
+          Allowed roles: Guest.
+        body:
+          application/json:
+            type: !include schemas/users/controller/login-body.json
+            example: !include examples/users/controller/login-body.json
+        responses:
+          200:
+            description: |
+              The user has been authenticated.
+            body:
+              application/json:
+                type: !include schemas/users/controller/login-responses-200.json
+                example: !include examples/users/controller/login-responses-200.json 
+    /forgot-password:
+      type: controller
+      post:
+        description: |
+          Proceed a user authentication in order to get  an access token for secured requests.
+          Allowed roles: Guest.
+        body:
+          application/json:
+            type: !include schemas/users/controller/password-body.json
+            example: !include examples/users/controller/password-body.json
+        responses:
+          200:
+            description: |
+              The user has been authenticated.
+            body:
+              application/json:
+                type: !include schemas/users/controller/password-responses-200.json
+                example: !include examples/users/controller/password-responses-200.json 
+    /reset-password:
+      type: controller
+      post:
+        description: |
+          Proceed a user authentication in order to get  an access token for secured requests.
+          Allowed roles: Guest.
+        body:
+          application/json:
+            type: !include schemas/users/controller/reset-body.json
+            example: !include examples/users/controller/reset-body.json
+        responses:
+          200:
+            description: |
+              The user has been authenticated.
+            body:
+              application/json:
+                type: !include schemas/users/controller/reset-responses-200.json
+                example: !include examples/users/controller/reset-responses-200.json 
+    
+    
+
