@@ -18,7 +18,7 @@ export default class TaskRoute {
     });
 
     this.router.get('/api/documentation', (req, res) => {
-      res.sendFile(path.join(__dirname, '../public/apidoc/index.html'));
+      res.sendFile(path.join(__dirname, '../../public/apidoc/index.html'));
     });
 
     this.router.use((error: any, req: Request, res: Response, next: NextFunction) => {

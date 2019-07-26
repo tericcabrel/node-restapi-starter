@@ -9,7 +9,7 @@ import { CustomRequest } from "../types";
 const uploadHandler = require('./uploadHandler');
 
 export const internalError = () => {
-  return Locale.trans('internal.error');
+  return { message: Locale.trans('internal.error') };
 };
 
 export const existMessage = (modelName: string) => {

@@ -8,7 +8,9 @@
     "watch": "nodemon --watch '*.ts' --exec 'ts-node' ./app/index.ts",
     "dev": "ts-node-dev --respawn --transpileOnly ./app/index.ts",
     "prod": "tsc && node ./build/index.js",
-    "test": "mocha -r ts-node/register ./app/tests/*/*.ts --recursive"
+    "test": "mocha -r ts-node/register ./app/tests/*/*.ts --recursive",
+    "api-designer": "api-designer --port 7011",
+    "apidoc": "raml2html public/apidoc/api.raml > public/apidoc/index.html"
   },
   "repository": {
     "type": "git",
@@ -50,10 +52,13 @@
     "@types/multer": "^1.3.7",
     "@types/node": "^12.6.6",
     "@types/nodemailer": "^6.2.0",
+    "api-designer": "^0.4.1",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "mocha": "^6.2.0",
     "nodemon": "^1.19.1",
+    "raml2html": "^7.4.0",
+    "request": "^2.88.0",
     "ts-node-dev": "^1.0.0-pre.40",
     "tslint": "^5.18.0",
     "tslint-config-airbnb": "^5.11.1",

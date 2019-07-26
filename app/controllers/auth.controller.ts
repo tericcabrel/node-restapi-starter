@@ -116,7 +116,7 @@ class AuthController {
       const user: any = await UserModel.getOneBy({ email_token: token });
 
       if (!user) {
-        return res.status(400).json({ error: Locale.trans('bad.token') });
+        return res.status(400).json({ message: Locale.trans('bad.token') });
       }
 
       const { _id } = user;
@@ -125,7 +125,7 @@ class AuthController {
       return res.json({ message: Locale.trans('account.confirmed') });
     } catch (err) {
       Logger.error(err);
-      return res.status(500).json({ error: internalError() });
+      return res.status(500).json(internalError());
     }
   }
 
@@ -147,7 +147,7 @@ class AuthController {
       let user: any = await UserModel.findOne({ email });
 
       if (!user) {
-        return res.status(404).json({ error: Locale.trans('no.user') });
+        return res.status(404).json({ message: Locale.trans('no.user') });
       }
 
       const { _id } = user;
@@ -193,7 +193,7 @@ class AuthController {
       jwt.verify(resetToken, JWT_EMAIL_SECRET, async (err: jwt.VerifyErrors, decoded: any) => {
         if (err) {
           Logger.error(err);
-          return res.status(400).json({message: Locale.trans('token.expired')});
+          return res.status(400).json({ message: Locale.trans('token.expired')});
         }
 
         const user: any = await UserModel.get(decoded.id);
