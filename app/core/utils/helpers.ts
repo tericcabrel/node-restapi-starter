@@ -44,7 +44,7 @@ export const uploadFile = async (req: any, res: express.Response) => {
       return resolve(req.file);
     });
   });
-  
+
   return await promise;
 };
 
@@ -86,13 +86,7 @@ export const randomStr = (n = 16) => {
   let text = '';
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-  let nChar = 24;
-
-  if (n !== undefined) {
-    nChar = n;
-  }
-
-  for (let i = 0; i < nChar; i += 1) {
+  for (let i = 0; i < n; i += 1) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
 
