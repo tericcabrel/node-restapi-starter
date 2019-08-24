@@ -7,6 +7,35 @@ import logger from '../logger';
 import Locale from '../locale';
 import { CustomRequest } from "../types";
 
+/**
+ * Create a new user and save to the database
+ * After registered, a confirmation's email is sent
+ *
+ * @param {string} token: Token to decode
+ * @param {string} jwtSecret: Secret key used to create the token
+ *
+ * @return Promise<any>
+ */
+export const decodeJwtToken = (token: string, jwtSecret: string): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, jwtSecret, (err: jwt.VerifyErrors, decoded: any) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(decoded);
+    });
+  });
+};
+
+/**
+ * Middleware to authorize a request only if a valid token is provided
+ *
+ * @param {Request|any} req: Request object
+ * @param {Response} res: Response object
+ * @param {NextFunction} next: NextFunction object
+ *
+ * @return any
+ */
 const authenticated = (req: CustomRequest|any, res: Response, next: NextFunction) => {
   const token: any = req.headers['x-access-token'];
 
@@ -18,6 +47,7 @@ const authenticated = (req: CustomRequest|any, res: Response, next: NextFunction
     'auth/account/confirm',
     'auth/password/forgot',
     'auth/password/reset',
+    'token/refresh'
   ];
 
   let routeName = null;
@@ -32,8 +62,7 @@ const authenticated = (req: CustomRequest|any, res: Response, next: NextFunction
   }
 
   if (token) {
-    const jwtSecret = config.JWT_SECRET || 'sdhsQWUQTEpeorne96$';
-    jwt.verify(token, jwtSecret, (err: jwt.VerifyErrors, decoded: any) => {
+    jwt.verify(token, config.JWT_SECRET, (err: jwt.VerifyErrors, decoded: any) => {
       if (err) {
         logger.error(err);
         return res.status(401).json({ message: Locale.trans('unauthorized') });

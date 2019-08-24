@@ -2,28 +2,103 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { Locales } from "../types";
 
+/**
+ * This class is responsible for internationalization
+ * @class
+ *
+ * @property {string[]} availables - Languages available
+ * @property {string} locale - Represents the current locale
+ * @property {Object} locales - Represents translation keys
+ * @property {boolean} initialized - Indicates if the locale files is loaded
+ */
 class Locale {
-  static availables: string[] = ['en', 'fr'];
-  static locale: string = 'en';
-  static locales: Locales = {};
-  static initialized = false;
+  /**
+   * @private
+   * @static
+   * */
+  private static availables: string[] = ['en', 'fr'];
 
-  constructor() {
+  /**
+   * @private
+   * @static
+   * */
+  private static locale: string;
+
+  /**
+   * @private
+   * @static
+   * */
+  private static locales: Locales = {};
+
+  /**
+   * @private
+   * @static
+   * */
+  private static initialized = false;
+
+  /**
+   * Initialize locale in the application
+   * @public
+   * @static
+   *
+   * @return void
+   */
+  public static init() {
     if (!Locale.initialized) {
-      this.readLanguageFile();
+      Locale.readLanguageFile();
       Locale.initialized = true;
+      Locale.locale = Locale.availables[0];
     }
   }
 
-  static setLocale(locale: string = 'en'): void {
+  /**
+   * Get available locales
+   * @public
+   * @static
+   *
+   * @return string[]
+   */
+  public static getAvailableLocales(): string[] {
+    return Locale.availables;
+  }
+
+  /**
+   * Set the current locale
+   * @public
+   * @static
+   *
+   * @param {string} locale=en - Locale to set as the current
+   *
+   * @return void
+   */
+  public static setLocale(locale: string = 'en'): void {
     Locale.locale = locale;
   }
 
-  static getLocale(): string {
+  /**
+   * Get the current locale
+   * @public
+   * @static
+   *
+   * @return string
+   */
+  public static getLocale(): string {
     return Locale.locale;
   }
 
-  static trans(key: string, params: { [string: string]: string } = {}, defaultValue = '') {
+  /**
+   * Get the text based on the current locale
+   *
+   * @public
+   * @static
+   *
+   * @param {string} key - Key in the object for which we want to translate the value
+   * @param {Object} params - Object containing the locale's keys
+   * @param {string} defaultValue='' - Value to return if the key is not found
+   *
+   * @return string
+   */
+  public static trans(key: string, params: { [string: string]: string } = {}, defaultValue = '') {
     if (!Locale.locales[Locale.locale]) {
       return defaultValue;
     }
@@ -42,7 +117,14 @@ class Locale {
     return defaultValue;
   }
 
-  readLanguageFile() {
+  /**
+   * Load all the locale files to get translation keys and values
+   *
+   * @private
+   *
+   * @return void
+   */
+  private static readLanguageFile() {
     const langFolderPath = path.join(__dirname, '../../locale');
     const files = fs.readdirSync(langFolderPath);
     const length = files.length;

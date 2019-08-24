@@ -15,6 +15,11 @@ import TaskRouter from './task.route';
 import localMiddleware from '../core/middleware/locale';
 import authMiddleware from '../core/middleware/auth';
 
+/**
+ * Global router configuration of the application
+ *
+ * @class
+ */
 export default class Routes {
   /**
    * @param  {Application} app

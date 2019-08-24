@@ -4,7 +4,12 @@ import * as path from 'path';
 import Locale from '../core/locale';
 import { internalError } from '../core/utils/helpers';
 
-export default class TaskRoute {
+/**
+ * Router configuration for common route
+ *
+ * @class
+ */
+export default class DefaultRoute {
   public router: Router;
 
   constructor() {

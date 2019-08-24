@@ -7,6 +7,11 @@ import { API_BASE } from '../core/config';
 
 const { task } = Validator.methods;
 
+/**
+ * Router configuration for task
+ *
+ * @class
+ */
 export default class TaskRoute {
   public router: Router;
 

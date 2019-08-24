@@ -6,7 +6,7 @@ import Locale from '../../core/locale';
 
 const expect = chai.expect;
 
-(new Locale());
+Locale.init();
 
 describe('Test Helpers methods', () => {
   it('should generate a number between 1 and 100', () => {
@@ -35,7 +35,9 @@ describe('Test Helpers methods', () => {
   });
 
   it('should return Internal server error !', () => {
-    expect(helpers.internalError()).to.be.include('error');
+    const result = helpers.internalError();
+    expect(result).to.have.property('message');
+    expect(result.message).to.be.include('error');
   });
 
   it('should return The model User already exist', () => {

@@ -7,6 +7,11 @@ import Logger from '../core/logger';
 import TaskTransformer from '../transformers/task';
 import { internalError, parseRequest } from '../core/utils/helpers';
 
+/**
+ * Controller for task
+ *
+ * @class
+ */
 class TaskController {
   /**
    * create()

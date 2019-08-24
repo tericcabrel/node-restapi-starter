@@ -41,6 +41,7 @@ class Validator implements IValidator {
       updateUser: 'updateUser',
       updateUserPassword: 'updateUserPassword',
       deleteUser: 'deleteUser',
+      refreshToken: 'refreshToken'
     },
     task: {
       createTask: 'createTask',

@@ -10,6 +10,11 @@ import UserTransformer from '../transformers/user';
 import { internalError, parseRequest } from '../core/utils/helpers';
 import { CustomRequest } from "../core/types";
 
+/**
+ * Controller for user details
+ *
+ * @class
+ */
 class UserController {
   /**
    * me()

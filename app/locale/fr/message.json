@@ -18,7 +18,7 @@
   "auth.token.failed": "Échec de l'authentification du jeton.",
   "no.user": "Aucun utilisateur trouvé",
   "password.reset": "Le mot de passe a été réinitialisé.",
-  "token.expired": "Le jeton d'email a expiré",
+  "token.expired": "Le jeton a expiré",
   "email.failed": "Une erreur s'est produite lors de l'envoi du courrier.",
   "email.success": "Veuillez vérifier votre email pour plus d'instructions",
   "bad.token": "Le jeton est invalide!",

@@ -7,21 +7,31 @@ import * as config from '../config';
 import Logger from '../logger';
 import Locale from '../locale';
 
+/**
+ * This class is responsible to send email with HTML template
+ *
+ * @class
+ */
 class Mailer {
+  /**
+   * Set a value in Redis
+   * @static
+   *
+   * @param {Object} data
+   *
+   * @return void
+   */
   static sendMail(data: any) {
-    try{
-      const user = config.MAIL_USERNAME;
-      const pass = config.MAIL_PASSWORD;
-      const host = config.MAIL_HOST;
-      const port = config.MAIL_PORT;
+    try {
+      const user: string = config.MAIL_USERNAME;
 
       const smtpTransport = nodemailer.createTransport({
         // @ts-ignore
-        host,
-        port,
+        host: config.MAIL_HOST,
+        port: config.MAIL_PORT,
         auth: {
           user,
-          pass,
+          pass: config.MAIL_PASSWORD,
         },
       });
 
@@ -32,7 +42,7 @@ class Mailer {
 
       const updatedData = {
         ...data,
-        from: `MyApp <${user}>`,
+        from: `Node Starter <${user}>`,
         subject: Locale.trans(data.subject),
         html
       };

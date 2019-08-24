@@ -22,7 +22,7 @@ Socket.init(server);
 server.listen(port, async() => {
   await dbConnection();
 
-  (new Locale());
+  Locale.init();
 
   Logger.info(`Server started - ${port}`);
 });

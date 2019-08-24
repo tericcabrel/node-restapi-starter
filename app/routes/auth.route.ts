@@ -7,6 +7,11 @@ import { API_BASE } from '../core/config';
 
 const { user } = Validator.methods;
 
+/**
+ * Router configuration for authentication
+ *
+ * @class
+ */
 export default class AuthRoute {
   public router: Router;
 
@@ -27,5 +32,7 @@ export default class AuthRoute {
     this.router.post(`${prefix}/password/forgot`, UserValidator.validate(user.forgotPassword), AuthController.forgotPassword);
 
     this.router.post(`${prefix}/password/reset`, UserValidator.validate(user.resetPassword), AuthController.resetPassword);
+
+    this.router.post(`${prefix}/token/refresh`, UserValidator.validate(user.refreshToken), AuthController.refreshToken);
   }
 };

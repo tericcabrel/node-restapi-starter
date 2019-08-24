@@ -7,7 +7,12 @@ import { API_BASE } from '../core/config';
 
 const { user } = Validator.methods;
 
-export default class AuthRoute {
+/**
+ * Router configuration for user
+ *
+ * @class
+ */
+export default class UserRoute {
   public router: Router;
 
   constructor() {

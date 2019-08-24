@@ -18,7 +18,7 @@
   "auth.token.failed": "Failed to authenticate token.",
   "no.user": "No user found",
   "password.reset": "password has been reset.",
-  "token.expired": "Email token has been expired",
+  "token.expired": "The token has been expired",
   "email.failed": "Error occurs when sending mail.",
   "email.success": "Kindly check your email for further instructions",
   "bad.token": "The token is invalid!",

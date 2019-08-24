@@ -8,11 +8,21 @@ import * as config from '../core/config';
 import Locale from '../core/locale';
 import Logger from '../core/logger';
 import Mailer from '../core/mailer';
+import RedisManager from '../core/storage/redis-manager';
 import { internalError } from '../core/utils/helpers';
 import { TokenInfo } from "../core/types";
+import { decodeJwtToken } from '../core/middleware/auth';
 
-const { JWT_SECRET, JWT_EXPIRE, JWT_EMAIL_SECRET, JWT_EMAIL_EXPIRE } = config;
+const {
+  JWT_SECRET, JWT_EXPIRE, JWT_EMAIL_SECRET, JWT_EMAIL_EXPIRE, JWT_REFRESH_SECRET, JWT_REFRESH_EXPIRE,
+  WEB_APP_URL, CONFIRM_ACCOUNT_PATH, RESET_PASSWORD_PATH
+} = config;
 
+/**
+ * Controller for authentication
+ *
+ * @class
+ */
 class AuthController {
   /**
    * register()
@@ -42,7 +52,7 @@ class AuthController {
         subject: 'mail.subject.confirm.account',
         template: 'confirm-account-email',
         context: {
-          url: `${process.env.WEB_APP_URL}/${process.env.CONFIRM_ACCOUNT_PATH}/${emailToken}`,
+          url: `${WEB_APP_URL}/${CONFIRM_ACCOUNT_PATH}/${emailToken}`,
           name: user.name,
           email: user.email,
         },
@@ -89,8 +99,12 @@ class AuthController {
 
       const { _id } = user;
       const tokenInfo: TokenInfo = { id: _id };
-      const token = jwt.sign(tokenInfo, JWT_SECRET, { expiresIn: JWT_EXPIRE });
-      return res.json({ token, expiresIn: JWT_EXPIRE });
+      const token: string = jwt.sign(tokenInfo, JWT_SECRET, { expiresIn: JWT_EXPIRE });
+      const refreshToken: string = jwt.sign(tokenInfo, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_EXPIRE });
+
+      await RedisManager.setValue(_id.toString(), refreshToken);
+
+      return res.json({ token, expiresIn: JWT_EXPIRE, refreshToken });
     } catch (err) {
       Logger.error(err);
       return res.status(500).json(internalError());
@@ -162,7 +176,7 @@ class AuthController {
         subject: 'mail.subject.forgot.password',
         template: 'forgot-password-email',
         context: {
-          url: `${process.env.WEB_APP_URL}/${process.env.RESET_PASSWORD_PATH}?token=${token}`,
+          url: `${WEB_APP_URL}/${RESET_PASSWORD_PATH}?token=${token}`,
           name: user.name,
         },
       };
@@ -211,6 +225,46 @@ class AuthController {
       });
     } catch (err) {
       Logger.error(err);
+      return res.status(500).json(internalError());
+    }
+  }
+
+  /**
+   * refreshToken()
+   *
+   * Generate a new access token for the user
+   *
+   * @param {Request} req: Request object
+   * @param {Response} res: Response object
+   * @param {NextFunction} next: NextFunction object
+   *
+   * @return Object
+   */
+  public async refreshToken(req: Request, res: Response, next: NextFunction): Promise<any> {
+    const { token, uid } = req.body;
+
+    try {
+      const tokenStorage: string|null = await RedisManager.getValue(uid);
+
+      if (tokenStorage !== token) {
+        return res.status(400).json({ message: Locale.trans('auth.token.failed')});
+      }
+
+      const decoded = await decodeJwtToken(token, JWT_REFRESH_SECRET);
+
+      if (decoded.id !== uid) {
+        return res.status(400).json({ message: Locale.trans('auth.token.failed')});
+      }
+
+      const tokenInfo: TokenInfo = { id: uid };
+      const newToken: string = jwt.sign(tokenInfo, JWT_SECRET, { expiresIn: JWT_EXPIRE });
+
+      return res.json({ token: newToken });
+    } catch (err) {
+      Logger.error(err);
+      if (err instanceof jwt.TokenExpiredError) {
+        return res.status(400).json({ message: Locale.trans('token.expired')});
+      }
       return res.status(500).json(internalError());
     }
   }

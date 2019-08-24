@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
 import { check } from 'express-validator';
 import { Request, Response, NextFunction } from "express";
 
@@ -126,6 +127,21 @@ export default {
       case 'deleteUser': {
         return [
           check('id').not().isEmpty().withMessage(() => { return Locale.trans('input.required'); }),
+          (req: Request, res: Response, next: NextFunction) => {
+            validator.validationHandler(req, res, next);
+          },
+        ];
+      }
+      case 'refreshToken': {
+        return [
+          check('token').not().isEmpty().withMessage(() => { return Locale.trans('input.empty'); }),
+          check('uid')
+            .custom(async (value: any, { req }: any) => {
+              const user = await User.get(mongoose.Types.ObjectId(req.body.uid));
+              if (!user) {
+                throw new Error(Locale.trans('user.not.exist'));
+              }
+            }),
           (req: Request, res: Response, next: NextFunction) => {
             validator.validationHandler(req, res, next);
           },

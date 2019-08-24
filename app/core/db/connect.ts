@@ -7,7 +7,13 @@ import { DB_CONNECTION_SUCCESS } from '../utils/constants';
 
 Mongoose.Promise = global.Promise;
 
-const dbConnection = async () => {
+/**
+ * Create the connection to the database
+ * @async
+ *
+ * @return Promise<void>
+ */
+const dbConnection = async (): Promise<void> => {
   const dbHost = config.DB_HOST;
   const dbPort = config.DB_PORT;
   const dbName = config.DB_NAME;

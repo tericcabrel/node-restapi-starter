@@ -6,5 +6,6 @@
   "min.length": "The value must be {value}+ chars long",
   "password.match": "The current password doesn't match",
   "max.length": "The value can't have more than {value} char(s)",
-  "input.date.invalid": "The date format is invalid ! Must be YYYY-MM-DD hh:mm:ss"
+  "input.date.invalid": "The date format is invalid ! Must be YYYY-MM-DD hh:mm:ss",
+  "user.not.exist": "No user found with the ID provided"
 }
