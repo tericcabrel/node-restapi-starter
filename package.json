@@ -5,7 +5,7 @@
   "main": "./build/index.js",
   "scripts": {
     "tsc": "tsc",
-    "watch": "nodemon --watch '*.ts' --exec 'ts-node' ./app/index.ts",
+    "start": "nodemon --watch '*.ts' --exec 'ts-node' ./app/index.ts",
     "dev": "ts-node-dev --respawn --transpileOnly ./app/index.ts",
     "prod": "tsc && node ./build/index.js",
     "test": "mocha -r ts-node/register ./app/tests/*/*.ts --recursive",
