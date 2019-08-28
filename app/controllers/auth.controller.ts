@@ -165,11 +165,8 @@ class AuthController {
       }
 
       const { _id } = user;
-      // const token = bcrypt.hashSync(randomStr(12), 8);
       const tokenInfo: TokenInfo = { id: _id };
       const token = jwt.sign(tokenInfo, JWT_EMAIL_SECRET, { expiresIn: JWT_EMAIL_EXPIRE });
-      // const expireDate = Date.now() + jwtExpire;
-      //user = await UserModel.change(_id, { reset_token: token, reset_password_expires: expireDate });
 
       const data = {
         to: user.email,
