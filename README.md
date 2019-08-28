@@ -14,7 +14,7 @@ This features are available in this project
 
 - **User Registration:** Register with the email confirmation sent
 - **Password reset**
-- **Authentication with JWT:** Generate Access token an Refresh token the login
+- **Authentication with JWT:** Generate Access token and Refresh token the login
 - **Logger:** Log info/error message into a log file
 - **Internationalization:** API can respond with the message in the language provided. French and English are available
 - **Socket.io:** Socket communication

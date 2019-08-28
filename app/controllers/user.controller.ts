@@ -32,7 +32,7 @@ class UserController {
       const user = await UserModel.get(req.userId);
 
       if (!user) {
-        return res.status(404).json({ error: Locale.trans('no.user') });
+        return res.status(404).json({ message: Locale.trans('no.user') });
       }
 
       const transformer = new UserTransformer(user);

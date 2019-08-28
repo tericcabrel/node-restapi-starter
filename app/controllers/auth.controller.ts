@@ -52,7 +52,7 @@ class AuthController {
         subject: 'mail.subject.confirm.account',
         template: 'confirm-account-email',
         context: {
-          url: `${WEB_APP_URL}/${CONFIRM_ACCOUNT_PATH}/${emailToken}`,
+          url: `${WEB_APP_URL}/${CONFIRM_ACCOUNT_PATH}?token=${emailToken}`,
           name: user.name,
           email: user.email,
         },
