@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import * as path from 'path';
 
-import Locale from '../core/locale';
+import { APP_NAME } from '../core/config';
 import { internalError } from '../core/utils/helpers';
 
 /**
@@ -19,7 +19,7 @@ export default class DefaultRoute {
 
   routes(): void {
     this.router.get('/', (req, res) => {
-      res.json(Locale.trans('welcome'));
+      res.render('index', { appName: APP_NAME });
     });
 
     this.router.get('/api/documentation', (req, res) => {

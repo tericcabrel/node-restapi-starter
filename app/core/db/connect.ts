@@ -20,7 +20,7 @@ const dbConnection = async (): Promise<void> => {
   const dbUser = config.DB_USER;
   const dbPassword = config.DB_PASSWORD;
 
-  const options = { useNewUrlParser: true , useFindAndModify: false, useCreateIndex: true };
+  const options = { useNewUrlParser: true , useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true };
   try {
     if (config.DB_AUTH !== 'true') {
       await Mongoose.connect(`mongodb://${dbHost}:${dbPort}/${dbName}`, options);
