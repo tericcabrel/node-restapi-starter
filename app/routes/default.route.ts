@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import * as path from 'path';
 
 import { APP_NAME } from '../core/config';
-import { internalError } from '../core/utils/helpers';
+import { internalError } from '../utils/helpers';
 
 /**
  * Router configuration for common route

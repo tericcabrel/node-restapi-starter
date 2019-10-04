@@ -2,9 +2,9 @@ import * as fs from 'fs';
 import * as bcrypt from 'bcryptjs';
 import * as express from 'express';
 
-import Locale from '../locale';
+import Locale from '../core/locale';
 import { REGEX } from './constants';
-import { CustomRequest } from "../types";
+import { CustomRequest } from "../core/types";
 
 const uploadHandler = require('./upload-handler');
 

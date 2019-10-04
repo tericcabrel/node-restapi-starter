@@ -9,7 +9,7 @@ import Locale from '../core/locale';
 import Logger from '../core/logger';
 import Mailer from '../core/mailer';
 import RedisManager from '../core/storage/redis-manager';
-import { internalError } from '../core/utils/helpers';
+import { internalError } from '../utils/helpers';
 import { TokenInfo } from "../core/types";
 import { decodeJwtToken } from '../core/middleware/auth';
 

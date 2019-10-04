@@ -3,7 +3,7 @@ import Mongoose from 'mongoose';
 import * as config from '../config';
 
 import logger from '../logger';
-import { DB_CONNECTION_SUCCESS } from '../utils/constants';
+import { DB_CONNECTION_SUCCESS } from '../../utils/constants';
 
 Mongoose.Promise = global.Promise;
 

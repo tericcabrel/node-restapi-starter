@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import Locale from '../core/locale';
 import Validator from './index';
 import Task from '../models/task.model';
-import { REGEX } from '../core/utils/constants';
+import { REGEX } from '../utils/constants';
 
 export default {
   validate: (method: string) => {

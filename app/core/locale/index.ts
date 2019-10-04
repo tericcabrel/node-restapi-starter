@@ -147,4 +147,4 @@ class Locale {
   }
 }
 
-export default Locale;
+export { Locale };

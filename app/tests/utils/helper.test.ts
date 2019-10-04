@@ -1,7 +1,7 @@
 import chai from 'chai';
 
 import * as config from '../../core/config';
-import * as helpers from '../../core/utils/helpers';
+import * as helpers from '../../utils/helpers';
 import Locale from '../../core/locale';
 
 const expect = chai.expect;

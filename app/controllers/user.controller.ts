@@ -7,7 +7,7 @@ import Logger from '../core/logger';
 import Locale from '../core/locale';
 import UserTransformer from '../transformers/user';
 
-import { internalError, parseRequest } from '../core/utils/helpers';
+import { internalError, parseRequest } from '../utils/helpers';
 import { CustomRequest } from "../core/types";
 
 /**

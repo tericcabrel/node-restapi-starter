@@ -1,6 +1,6 @@
 import * as http from 'http';
 import SocketIO from 'socket.io';
-import { randomStr } from '../utils/helpers';
+import { randomStr } from '../../utils/helpers';
 import { SocketSession, SocketSessionItem } from '../types/socket';
 import { GetCountryEvent } from './events';
 
