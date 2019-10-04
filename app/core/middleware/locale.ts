@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
-import Locale from '../locale';
+import { Locale } from '../locale';
 
 /**
  * Middleware to get the language of the client
@@ -12,13 +12,13 @@ import Locale from '../locale';
  *
  * @return Promise<void>
  */
-const localeMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const availableLocales: string[] = Locale.getAvailableLocales();
-  const language: string = req.headers['accept-language'] || availableLocales[0];
+const localeMiddleware: any = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+	const availableLocales: string[] = Locale.getAvailableLocales();
+	const language: string = req.headers['accept-language'] || availableLocales[0];
 
-  Locale.setLocale(availableLocales.indexOf(language) >= 0 ? language : availableLocales[0]);
+	Locale.setLocale(availableLocales.indexOf(language) >= 0 ? language : availableLocales[0]);
 
-  return next();
+	return next();
 };
 
-export default localeMiddleware;
+export { localeMiddleware };

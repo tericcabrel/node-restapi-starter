@@ -9,7 +9,7 @@ import { internalError } from '../utils/helpers';
  *
  * @class
  */
-export default class DefaultRoute {
+class DefaultRoute {
   public router: Router;
 
   constructor() {
@@ -34,3 +34,6 @@ export default class DefaultRoute {
     });
   }
 }
+
+export { DefaultRoute };
+

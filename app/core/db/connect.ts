@@ -1,11 +1,11 @@
-import Mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 import * as config from '../config';
 
-import logger from '../logger';
+import { logger } from '../logger';
 import { DB_CONNECTION_SUCCESS } from '../../utils/constants';
 
-Mongoose.Promise = global.Promise;
+mongoose.Promise = global.Promise;
 
 /**
  * Create the connection to the database
@@ -13,24 +13,27 @@ Mongoose.Promise = global.Promise;
  *
  * @return Promise<void>
  */
-const dbConnection = async (): Promise<void> => {
-  const dbHost = config.DB_HOST;
-  const dbPort = config.DB_PORT;
-  const dbName = config.DB_NAME;
-  const dbUser = config.DB_USER;
-  const dbPassword = config.DB_PASSWORD;
+const dbConnection: Function = async (): Promise<void> => {
+	const dbHost: string = config.DB_HOST;
+	const dbPort: number = config.DB_PORT;
+	const dbName: string = config.DB_NAME;
+	const dbUser: string = config.DB_USER;
+	const dbPassword: string = config.DB_PASSWORD;
 
-  const options = { useNewUrlParser: true , useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true };
-  try {
-    if (config.DB_AUTH !== 'true') {
-      await Mongoose.connect(`mongodb://${dbHost}:${dbPort}/${dbName}`, options);
-    } else {
-      await Mongoose.connect(`mongodb://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`, options);
-    }
-    logger.info(DB_CONNECTION_SUCCESS);
-  } catch (err) {
-    logger.error(err.stack);
-  }
+	const options: object = {
+		useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true,
+	};
+
+	try {
+		if (config.DB_AUTH !== 'true') {
+			await mongoose.connect(`mongodb://${dbHost}:${dbPort}/${dbName}`, options);
+		} else {
+			await mongoose.connect(`mongodb://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`, options);
+		}
+		logger.info(DB_CONNECTION_SUCCESS);
+	} catch (err) {
+		logger.error(err.stack);
+	}
 };
 
-export default dbConnection;
+export { dbConnection };

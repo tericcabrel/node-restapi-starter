@@ -12,7 +12,7 @@ const { user } = Validator.methods;
  *
  * @class
  */
-export default class UserRoute {
+class UserRoute {
   public router: Router;
 
   constructor() {
@@ -36,3 +36,5 @@ export default class UserRoute {
     this.router.delete(`${prefix}/:id`, UserValidator.validate(user.deleteUser), UserController.destroy);
   }
 }
+
+export { UserRoute };

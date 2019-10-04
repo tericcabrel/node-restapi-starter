@@ -12,7 +12,7 @@ const { user } = Validator.methods;
  *
  * @class
  */
-export default class AuthRoute {
+class AuthRoute {
   public router: Router;
 
   constructor() {
@@ -36,3 +36,5 @@ export default class AuthRoute {
     this.router.post(`${prefix}/token/refresh`, UserValidator.validate(user.refreshToken), AuthController.refreshToken);
   }
 };
+
+export { AuthRoute }

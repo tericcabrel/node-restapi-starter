@@ -2,10 +2,10 @@ import * as jwt from 'jsonwebtoken';
 import { Response, NextFunction } from 'express';
 
 import * as config from '../config';
-import logger from '../logger';
+import { logger } from '../logger';
 
-import Locale from '../locale';
-import { CustomRequest } from "../types";
+import { Locale } from '../locale';
+import { CustomRequest } from '../types';
 
 /**
  * Create a new user and save to the database
@@ -16,15 +16,16 @@ import { CustomRequest } from "../types";
  *
  * @return Promise<any>
  */
-export const decodeJwtToken = (token: string, jwtSecret: string): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    jwt.verify(token, jwtSecret, (err: jwt.VerifyErrors, decoded: any) => {
-      if (err) {
-        return reject(err);
-      }
-      return resolve(decoded);
-    });
-  });
+export const decodeJwtToken: object = (token: string, jwtSecret: string): Promise<any> => {
+	return new Promise((resolve: any, reject: any): any => {
+		jwt.verify(token, jwtSecret, (err: jwt.VerifyErrors, decoded: any) => {
+			if (err) {
+				return reject(err);
+			}
+
+			return resolve(decoded);
+		});
+	});
 };
 
 /**
@@ -36,49 +37,51 @@ export const decodeJwtToken = (token: string, jwtSecret: string): Promise<any> =
  *
  * @return any
  */
-const authenticated = (req: CustomRequest|any, res: Response, next: NextFunction) => {
-  const token: any = req.headers['x-access-token'];
+const authMiddleware: any = (req: CustomRequest|any, res: Response, next: NextFunction): any => {
+	const token: any = req.headers['x-access-token'];
 
-  const allowedRoutes = [
-    '/',
-    '/api/documentation',
-    'auth/login',
-    'auth/register',
-    'auth/account/confirm',
-    'auth/password/forgot',
-    'auth/password/reset',
-    'token/refresh'
-  ];
+	const allowedRoutes: string[] = [
+		'/',
+		'/api/documentation',
+		'auth/login',
+		'auth/register',
+		'auth/account/confirm',
+		'auth/password/forgot',
+		'auth/password/reset',
+		'token/refresh',
+	];
 
-  let routeName = null;
-  if (req.originalUrl) {
-    routeName = req.originalUrl.replace(config.API_BASE || '', '');
-  } else {
-    return res.status(401).json({ message: Locale.trans('unauthorized') });
-  }
+	let routeName: string = '';
+	if (req.originalUrl) {
+		routeName = req.originalUrl.replace(config.API_BASE || '', '');
+	} else {
+		return res.status(401).json({ message: Locale.trans('unauthorized') });
+	}
 
-  if (allowedRoutes.indexOf(routeName) >= 0) {
-    return next();
-  }
+	if (allowedRoutes.indexOf(routeName) >= 0) {
+		return next();
+	}
 
-  if (token) {
-    jwt.verify(token, config.JWT_SECRET, (err: jwt.VerifyErrors, decoded: any) => {
-      if (err) {
-        logger.error(err);
-        return res.status(401).json({ message: Locale.trans('unauthorized') });
-      }
+	if (token) {
+		jwt.verify(token, config.JWT_SECRET, (err: jwt.VerifyErrors, decoded: any) => {
+			if (err) {
+				logger.error(err);
 
-      if (!decoded.id) {
-        return res.status(401).json({ message: Locale.trans('unauthorized') });
-      }
+				return res.status(401).json({ message: Locale.trans('unauthorized') });
+			}
 
-      // if everything good, save to request for use in other routes
-      req.userId = decoded.id;
-      return next();
-    });
-  } else {
-    return res.status(401).json({ message: Locale.trans('unauthorized') });
-  }
+			if (!decoded.id) {
+				return res.status(401).json({ message: Locale.trans('unauthorized') });
+			}
+
+			// if everything good, save to request for use in other routes
+			req.userId = decoded.id;
+
+			return next();
+		});
+	} else {
+		return res.status(401).json({ message: Locale.trans('unauthorized') });
+	}
 };
 
-export default authenticated;
+export { authMiddleware };

@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router } from 'express';
 
 import TaskController from '../controllers/task.controller';
 import TaskValidator from '../validator/task.validator';
@@ -12,7 +12,7 @@ const { task } = Validator.methods;
  *
  * @class
  */
-export default class TaskRoute {
+class TaskRoute {
   public router: Router;
 
   constructor() {
@@ -34,3 +34,5 @@ export default class TaskRoute {
     this.router.get(`${prefix}/:id`, TaskController.one);
   }
 }
+
+export { TaskRoute };

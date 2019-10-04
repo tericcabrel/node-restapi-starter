@@ -1,5 +1,6 @@
 import * as http from 'http';
 import SocketIO from 'socket.io';
+
 import { randomStr } from '../../utils/helpers';
 import { SocketSession, SocketSessionItem } from '../types/socket';
 import { GetCountryEvent } from './events';
@@ -7,7 +8,7 @@ import { GetCountryEvent } from './events';
 // Socket tasks
 import GetCountryTask from './tasks/get-country.task';
 
-export default class SocketManager {
+class SocketManager {
 	static sessions: SocketSession = { };
 
 	/**
@@ -82,3 +83,5 @@ export default class SocketManager {
 		}
 	}
 }
+
+export { SocketManager };
