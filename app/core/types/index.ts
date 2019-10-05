@@ -26,3 +26,7 @@ export type RegexObject = {
 	email: RegExp;
 	date: RegExp;
 };
+
+export type InternalServerError = {
+	message: string;
+};

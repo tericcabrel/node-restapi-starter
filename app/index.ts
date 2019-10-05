@@ -27,4 +27,4 @@ server.listen(port, async() => {
 	logger.info(`Server started - ${port}`);
 });
 
-export default server;
+export { server };

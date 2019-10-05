@@ -1,16 +1,17 @@
 import * as bcrypt from 'bcryptjs';
 
+import { CustomRequest, InternalServerError } from '../core/types';
+
 import { REGEX } from './constants';
 
 import { Locale } from '../core/locale';
-import { CustomRequest } from '../core/types';
 
 /**
  * Translate internal server error
  *
  * @return Object
  */
-export const internalError: Function = (): { message: string } => {
+export const internalError: Function = (): InternalServerError => {
 	return { message: Locale.trans('internal.error') };
 };
 
