@@ -1,20 +1,17 @@
-import * as fs from 'fs';
 import * as bcrypt from 'bcryptjs';
-import * as express from 'express';
 
-import Locale from '../core/locale';
 import { REGEX } from './constants';
-import { CustomRequest } from "../core/types";
 
-const uploadHandler = require('./upload-handler');
+import { Locale } from '../core/locale';
+import { CustomRequest } from '../core/types';
 
 /**
  * Translate internal server error
  *
  * @return Object
  */
-export const internalError = (): { message: string } => {
-  return { message: Locale.trans('internal.error') };
+export const internalError: Function = (): { message: string } => {
+	return { message: Locale.trans('internal.error') };
 };
 
 /**
@@ -24,8 +21,8 @@ export const internalError = (): { message: string } => {
  *
  * @return string
  */
-export const existMessage = (modelName: string): string => {
-  return Locale.trans('model.exist', { model: modelName });
+export const existMessage: Function = (modelName: string): string => {
+	return Locale.trans('model.exist', { model: modelName });
 };
 
 /**
@@ -35,8 +32,8 @@ export const existMessage = (modelName: string): string => {
  *
  * @return string
  */
-export const notFound = (modelName: string): string => {
-  return Locale.trans('model.not.found', { model: modelName });
+export const notFound: Function = (modelName: string): string => {
+	return Locale.trans('model.not.found', { model: modelName });
 };
 
 /**
@@ -46,48 +43,13 @@ export const notFound = (modelName: string): string => {
  *
  * @return Promise<string>
  */
-export const hashPassword = async (password: string): Promise<string> => {
-  return await new Promise((resolve, reject) => {
-    bcrypt.hash(password, 10, (err: any, hash: string) => {
-      if (err) reject(err);
-      resolve(hash);
-    });
-  });
-};
-
-/**
- * Delete a file
- *
- * @param {string} filePath - Model's name
- *
- * @return void
- */
-export const deleteFile = (filePath: string): void => {
-  if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
-  }
-};
-
-/**
- * Upload a file
- * @async
- *
- * @param {any} req - body's request
- * @param {Response} res - body's response
- *
- * @return Promise<any>
- */
-export const uploadFile = async (req: any, res: express.Response): Promise<any> => {
-  const promise = new Promise((resolve, reject) => {
-    uploadHandler(req, res, (error: any) => {
-      if (error) {
-        return reject(error);
-      }
-      return resolve(req.file);
-    });
-  });
-
-  return await promise;
+export const hashPassword: Function = async (password: string): Promise<string> => {
+	return await new Promise((resolve: any, reject: any): void => {
+		bcrypt.hash(password, 10, (err: any, hash: string) => {
+			if (err) reject(err);
+			resolve(hash);
+		});
+	});
 };
 
 /**
@@ -98,18 +60,16 @@ export const uploadFile = async (req: any, res: express.Response): Promise<any> 
  *
  * @return Object
  */
-export const parseRequest = (requestBody: any, objectKeys: string[]) => {
-  const result: any = {};
+export const parseRequest: Function = (requestBody: any, objectKeys: string[]): any => {
+	const result: any = {};
 
-  objectKeys.forEach((key: string) => {
-    if (requestBody[key] !== undefined) {
-      result[key] = requestBody[key];
-    }
-  });
+	objectKeys.forEach((key: string) => {
+		if (requestBody[key] !== undefined) {
+			result[key] = requestBody[key];
+		}
+	});
 
-  const inputKeys = Object.keys(result);
-
-  return inputKeys.length === 0 ? null : result;
+	return Object.keys(result).length === 0 ? null : result;
 };
 
 /**
@@ -119,8 +79,8 @@ export const parseRequest = (requestBody: any, objectKeys: string[]) => {
  *
  * @return string
  */
-export const cleanText = (str: string) => {
-  return str.trim().replace(/\\n/g, '');
+export const cleanText: Function = (str: string): string => {
+	return str.trim().replace(/\\n/g, '');
 };
 
 /**
@@ -130,8 +90,8 @@ export const cleanText = (str: string) => {
  *
  * @return boolean
  */
-export const isValidIPV4Address = (ipAddress: string): boolean => {
-  return REGEX.ipAddress.test(ipAddress);
+export const isValidIPV4Address: Function = (ipAddress: string): boolean => {
+	return REGEX.ipAddress.test(ipAddress);
 };
 
 /**
@@ -141,23 +101,10 @@ export const isValidIPV4Address = (ipAddress: string): boolean => {
  *
  * @return string
  */
-export const getBaseUrlFromRequest = (req: CustomRequest|any): string => {
-  const port = isValidIPV4Address(req.hostname) || req.hostname === 'localhost' ? `:${process.env.SERVER_PORT}` : '';
-  return `${req.protocol}://${req.hostname}${port}`;
-};
+export const getBaseUrlFromRequest: Function = (req: CustomRequest|any): string => {
+	const port: string = isValidIPV4Address(req.hostname) || req.hostname === 'localhost' ? `:${process.env.SERVER_PORT}` : '';
 
-/**
- * Read a file
- *
- * @param {string} filePath - Path of the file which we want to read the content
- *
- * @return string|null
- */
-export const readFile = (filePath: string): string|null => {
-  if (fs.existsSync(filePath)) {
-    return fs.readFileSync(filePath, { encoding: 'utf8' });
-  }
-  return null;
+	return `${req.protocol}://${req.hostname}${port}`;
 };
 
 /**
@@ -167,15 +114,15 @@ export const readFile = (filePath: string): string|null => {
  *
  * @return string
  */
-export const randomStr = (n = 16) => {
-  let text = '';
-  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+export const randomStr: Function = (n: number = 16): string => {
+	let text: string = '';
+	const possible: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-  for (let i = 0; i < n; i += 1) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
+	for (let i: number = 0; i < n; i += 1) {
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
 
-  return text;
+	return text;
 };
 
 /**
@@ -187,20 +134,20 @@ export const randomStr = (n = 16) => {
  *
  * @return Object[]
  */
-export const paginate = (array: any[], limit: number, offset: number) => {
-  const result = [];
-  const startIndex = limit * (offset - 1);
-  const length = startIndex + limit;
+export const paginate: Function = (array: any[], limit: number, offset: number): any[] => {
+	const result: any[] = [];
+	const startIndex: number = limit * (offset - 1);
+	const length: number = startIndex + limit;
 
-  for (let i = startIndex; i < length; i += 1) {
-    if (array[i]) {
-      result.push(array[i]);
-    } else {
-      break;
-    }
-  }
+	for (let i: number = startIndex; i < length; i += 1) {
+		if (!array[i]) {
+			break;
+		}
 
-  return result;
+		result.push(array[i]);
+	}
+
+	return result;
 };
 
 /**
@@ -211,7 +158,8 @@ export const paginate = (array: any[], limit: number, offset: number) => {
  *
  * @return number
  */
-export const getRandomInt = (min: number, max: number): number => {
-  const borne = max - (min + 1);
-  return Math.floor(Math.random() * (borne + min));
+export const getRandomInt: Function = (min: number, max: number): number => {
+	const borne: number = max - (min + 1);
+
+	return Math.floor(Math.random() * (borne + min));
 };

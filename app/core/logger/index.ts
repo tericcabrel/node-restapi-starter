@@ -7,15 +7,14 @@ import * as config from '../config';
 const { combine, timestamp, printf }: any = format;
 const t: any = require('winston-daily-rotate-file');
 
-const logFileDir: string|undefined = config.LOG_FILE_DIR;
-const dir: string = logFileDir !== undefined ? path.join(__dirname, logFileDir) : '';
+const logFileDir: string = path.join(__dirname, config.LOG_FILE_DIR);
 
-if (!fs.existsSync(dir)) {
-	fs.mkdirSync(dir);
+if (!fs.existsSync(logFileDir)) {
+	fs.mkdirSync(logFileDir);
 }
 
 const transport: any = new (t)({
-	dirname: dir,
+	dirname: logFileDir,
 	filename: 'logs/app-%DATE%.log',
 	datePattern: 'YYYY-MM-DD-HH',
 	zippedArchive: true,
@@ -23,11 +22,11 @@ const transport: any = new (t)({
 	maxFiles: '14d',
 });
 
-transport.on('rotate', (oldFilename: string, newFilename: string) => {
+/* transport.on('rotate', (oldFilename: string, newFilename: string) => {
 	// do something fun
-});
+});*/
 
-const myFormat: any = printf(({ level, message, label, timestamp }: any) => {
+const myFormat: any = printf(({ level, message, timestamp }: any) => {
 	return `${timestamp} ${level}: ${message}`; // `${timestamp}[${level}]- ${message}`;
 });
 

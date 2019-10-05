@@ -3,9 +3,9 @@ import * as jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
 import * as config from '../core/config';
+import mailer from '../core/mailer';
 import { Locale }from '../core/locale';
 import { logger } from '../core/logger';
-import mailer from '../core/mailer';
 import { RedisManager } from '../core/storage/redis-manager';
 import { TokenInfo } from '../core/types';
 import { decodeJwtToken } from '../core/middleware/auth';

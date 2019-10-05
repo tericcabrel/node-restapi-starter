@@ -1,12 +1,12 @@
 import * as http from 'http';
-import SocketIO from 'socket.io';
+import socketIo from 'socket.io';
 
 import { randomStr } from '../../utils/helpers';
 import { SocketSession, SocketSessionItem } from '../types/socket';
-import { GetCountryEvent } from './events';
+import { getCountryEvent } from './events';
 
 // Socket tasks
-import GetCountryTask from './tasks/get-country.task';
+import { GetCountryTask } from './tasks/get-country.task';
 
 class SocketManager {
 	static sessions: SocketSession = { };
@@ -17,13 +17,13 @@ class SocketManager {
 	 * @return void
 	 */
 	static init(server: http.Server): void {
-		const io: SocketIO.Server = SocketIO.listen(server, { pingTimeout: 700000 });
+		const io: socketIo.Server = socketIo.listen(server, { pingTimeout: 700000 });
 
-		io.sockets.on('connection', async (socket: SocketIO.Socket) => {
+		io.sockets.on('connection', async (socket: socketIo.Socket) => {
 			const socketSessionId: string = SocketManager.createSession(socket);
 
-			socket.on(GetCountryEvent.request, (data: any) => {
-				console.log(`[${GetCountryEvent}]: %s`, JSON.stringify(data));
+			socket.on(getCountryEvent.request, (data: any) => {
+				console.log(`[${getCountryEvent}]: %s`, JSON.stringify(data));
 				GetCountryTask.run(SocketManager.sessions, socketSessionId, data);
 			});
 
@@ -42,8 +42,9 @@ class SocketManager {
 	 *
 	 * @return string The socket's session ID
 	 */
-	static createSession(socket: SocketIO.Socket): string {
-		const socketSessionId = randomStr(24);
+	static createSession(socket: socketIo.Socket): string {
+		const socketSessionId: string = randomStr(24);
+
 		console.log('socketSessionId', socketSessionId);
 
 		if (!SocketManager.sessions[socketSessionId]) {

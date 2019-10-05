@@ -1,16 +1,18 @@
-import Joi from '@hapi/joi';
+import joi, { SchemaMap, ValidationResult } from '@hapi/joi';
 
-export default class SocketTask {
+class SocketTask {
 	//
-	static defaultSchema = {
-		rid: Joi.string().required()
+	static defaultSchema: SchemaMap = {
+		rid: joi.string().required(),
 	};
 
-	 static validateWithDefaultSchema(data: any, joiSchema: Joi.Schema){
-		return Joi.validate({ ...SocketTask.defaultSchema, ...data }, joiSchema);
-	};
+	static validateWithDefaultSchema(data: any, joiSchema: joi.Schema): ValidationResult<joi.Schema> {
+		return joi.validate({ ...SocketTask.defaultSchema, ...data }, joiSchema);
+	}
 
-	 static validateWithoutDefaultSchema(data: any, joiSchema: Joi.Schema){
-		return Joi.validate(data, joiSchema);
-	};
+	static validateWithoutDefaultSchema(data: any, joiSchema: joi.Schema): ValidationResult<joi.Schema> {
+		return joi.validate(data, joiSchema);
+	}
 }
+
+export { SocketTask };
