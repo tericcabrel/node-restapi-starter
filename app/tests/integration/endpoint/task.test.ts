@@ -4,6 +4,7 @@ import { Response } from 'superagent';
 
 import { ITaskModel } from '../../../core/types/models';
 import { server } from '../../../index';
+import { createJwtToken } from '../../../core/middleware/auth';
 
 const expect: Chai.ExpectStatic = chai.expect;
 
@@ -20,6 +21,8 @@ describe('Tasks endpoints', () => {
 		user: '5cee861d04d9f4214dc8dce6',
 	};
 
+	const token: string = createJwtToken({ id: taskData.user });
+
 	beforeEach(() => {
 
 	});
@@ -32,6 +35,7 @@ describe('Tasks endpoints', () => {
 	it('should fail to create the task', () => {
 		return chai.request(server)
 			.post('/v1/tasks/create')
+			.set('x-access-token', token)
 			.send({})
 			.then((res: Response) => {
 				expect(res).to.have.status(422);
@@ -45,6 +49,7 @@ describe('Tasks endpoints', () => {
 	it('should create a task', () => {
 		return chai.request(server)
 			.post('/v1/tasks/create')
+			.set('x-access-token', token)
 			.send(taskData)
 			.then((res: Response) => {
 				expect(res).to.have.status(200);
@@ -63,6 +68,7 @@ describe('Tasks endpoints', () => {
 
 		return chai.request(server)
 			.put(`/v1/tasks/${taskData.id}`)
+			.set('x-access-token', token)
 			.send(taskData)
 			.then((res: Response) => {
 				expect(res).to.have.status(200);
@@ -76,6 +82,7 @@ describe('Tasks endpoints', () => {
 	it('should return all tasks', () => {
 		return chai.request(server)
 			.get('/v1/tasks')
+			.set('x-access-token', token)
 			.then((res: Response) => {
 				expect(res).to.have.status(200);
 				expect(res).to.be.json;
@@ -87,6 +94,7 @@ describe('Tasks endpoints', () => {
 	it('should return Not Found', () => {
 		return chai.request(server)
 			.get('/v1/invalid/path')
+			.set('x-access-token', token)
 			.then((res: Response) => {
 				expect(res).to.have.status(404);
 			})
@@ -99,6 +107,7 @@ describe('Tasks endpoints', () => {
 	it('should get one task', () => {
 		return chai.request(server)
 			.get(`/v1/tasks/${taskData.id}`)
+			.set('x-access-token', token)
 			.then((res: Response) => {
 				expect(res).to.have.status(200);
 				expect(res).to.be.json;
@@ -111,6 +120,7 @@ describe('Tasks endpoints', () => {
 	it('should delete a task', () => {
 		return chai.request(server)
 			.delete(`/v1/tasks/${taskData.id}`)
+			.set('x-access-token', token)
 			.then((res: Response) => {
 				expect(res).to.have.status(200);
 				expect(res).to.be.json;

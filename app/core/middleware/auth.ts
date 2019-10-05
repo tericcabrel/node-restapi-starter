@@ -8,6 +8,17 @@ import { Locale } from '../locale';
 import { CustomRequest } from '../types';
 
 /**
+ * Create a JWT Token
+ *
+ * @param {any} payload: Information to encode in
+ *
+ * @return string
+ */
+export const createJwtToken: Function = (payload: any): string => {
+	return jwt.sign(payload, config.JWT_SECRET, { expiresIn: config.JWT_EXPIRE });
+};
+
+/**
  * Create a new user and save to the database
  * After registered, a confirmation's email is sent
  *
