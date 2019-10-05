@@ -8,9 +8,10 @@
     "start": "nodemon --watch '*.ts' --exec 'ts-node' ./app/index.ts",
     "dev": "ts-node-dev --respawn --transpileOnly ./app/index.ts",
     "prod": "tsc && node ./build/index.js",
-    "test": "mocha -r ts-node/register ./app/tests/**/*.ts --recursive",
+    "test": "mocha -r ts-node/register ./app/tests/**/*.ts --recursive --exit --timeout 5000",
     "api-designer": "api-designer --port 7011",
-    "apidoc": "raml2html --theme raml2html-slate-theme -i public/apidoc/api.raml -o public/apidoc/index.html"
+    "apidoc": "raml2html --theme raml2html-slate-theme -i public/apidoc/api.raml -o public/apidoc/index.html",
+    "coverage": "nyc mocha -r ts-node/register ./app/tests/**/*.ts --recursive --exit"
   },
   "repository": {
     "type": "git",
@@ -65,6 +66,7 @@
     "chai-http": "^4.3.0",
     "mocha": "^6.2.0",
     "nodemon": "^1.19.1",
+    "nyc": "^14.1.1",
     "raml2html": "^7.4.0",
     "raml2html-slate-theme": "^2.5.0",
     "request": "^2.88.0",

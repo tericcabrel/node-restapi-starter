@@ -1,0 +1,23 @@
+{
+  "all": true,
+  "extension": [
+    ".ts"
+  ],
+  "include": [
+    "app/**/*.ts"
+  ],
+  "exclude": [
+    "app/locale/**",
+    "app/log/**",
+    "app/views/**",
+    "app/tests/**",
+    "app/core/config/**",
+    "app/core/logger/**",
+    "app/core/types/**",
+    "public/**"
+  ],
+  "excludeNodeModules": true,
+  "reporter": [
+    "html", "text"
+  ]
+}
