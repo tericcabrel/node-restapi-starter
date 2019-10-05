@@ -1,22 +1,23 @@
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
-import { Request, Response, NextFunction } from "express";
-
-import UserModel from '../models/user.model';
+import { Request, Response, NextFunction } from 'express';
 
 import * as config from '../core/config';
-import Locale from '../core/locale';
-import Logger from '../core/logger';
-import Mailer from '../core/mailer';
-import RedisManager from '../core/storage/redis-manager';
-import { internalError } from '../utils/helpers';
-import { TokenInfo } from "../core/types";
+import { Locale }from '../core/locale';
+import { logger } from '../core/logger';
+import mailer from '../core/mailer';
+import { RedisManager } from '../core/storage/redis-manager';
+import { TokenInfo } from '../core/types';
 import { decodeJwtToken } from '../core/middleware/auth';
 
+import { internalError } from '../utils/helpers';
+
+import { Model as UserModel } from '../models/user.model';
+
 const {
-  JWT_SECRET, JWT_EXPIRE, JWT_EMAIL_SECRET, JWT_EMAIL_EXPIRE, JWT_REFRESH_SECRET, JWT_REFRESH_EXPIRE,
-  WEB_APP_URL, CONFIRM_ACCOUNT_PATH, RESET_PASSWORD_PATH
-} = config;
+	JWT_SECRET, JWT_EXPIRE, JWT_EMAIL_SECRET, JWT_EMAIL_EXPIRE, JWT_REFRESH_SECRET, JWT_REFRESH_EXPIRE,
+	WEB_APP_URL, CONFIRM_ACCOUNT_PATH, RESET_PASSWORD_PATH,
+}: any = config;
 
 /**
  * Controller for authentication
@@ -24,7 +25,7 @@ const {
  * @class
  */
 class AuthController {
-  /**
+	/**
    * register()
    *
    * Create a new user and save to the database
@@ -36,38 +37,40 @@ class AuthController {
    *
    * @return Object
    */
-  public async register(req: Request, res: Response, next: NextFunction): Promise<any> {
-    try {
-      const { name, username, email } = req.body;
+	public async register(req: Request, res: Response, next: NextFunction): Promise<any> {
+		try {
+			const { name, username, email }: any = req.body;
 
-      const password = bcrypt.hashSync(req.body.password, 10);
+			const password: string = bcrypt.hashSync(req.body.password, 10);
 
-      const emailToken = bcrypt.hashSync(email, 8);
-      const userParam: any = { name, username, email, password, email_token: emailToken };
-      const user: any = new UserModel(userParam);
-      await user.save();
+			const emailToken: string = bcrypt.hashSync(email, 8);
+			const userParam: any = { name, username, email, password, email_token: emailToken };
+			const user: any  = new UserModel(userParam);
 
-      const data = {
-        to: user.email,
-        subject: 'mail.subject.confirm.account',
-        template: 'confirm-account-email',
-        context: {
-          url: `${WEB_APP_URL}/${CONFIRM_ACCOUNT_PATH}?token=${emailToken}`,
-          name: user.name,
-          email: user.email,
-        },
-      };
+			await user.save();
 
-      Mailer.sendMail(data);
+			const data: Object = {
+				to: user.email,
+				subject: 'mail.subject.confirm.account',
+				template: 'confirm-account-email',
+				context: {
+					url: `${WEB_APP_URL}/${CONFIRM_ACCOUNT_PATH}?token=${emailToken}`,
+					name: user.name,
+					email: user.email,
+				},
+			};
 
-      return res.json({ message: Locale.trans('register.success') });
-    } catch (err) {
-      Logger.error(err);
-      return res.status(500).json(internalError());
-    }
-  }
+			mailer.sendMail(data);
 
-  /**
+			return res.json({ message: Locale.trans('register.success') });
+		} catch (err) {
+			logger.error(err);
+
+			return res.status(500).json(internalError());
+		}
+	}
+
+	/**
    * login()
    *
    * Login user with email address and password
@@ -78,40 +81,42 @@ class AuthController {
    *
    * @return Object
    */
-  public async login(req: Request, res: Response, next: NextFunction): Promise<any> {
-    const { email, password } = req.body;
+	public async login(req: Request, res: Response, next: NextFunction): Promise<any> {
+		const { email, password }: any = req.body;
 
-    try {
-      const user: any = await UserModel.findOne({ email });
+		try {
+			const user: any = await UserModel.findOne({ email });
 
-      if (!user) {
-        return res.status(401).json({ message: Locale.trans('login.failed') });
-      }
+			if (!user) {
+				return res.status(401).json({ message: Locale.trans('login.failed') });
+			}
 
-      const isMatch = bcrypt.compareSync(password, user.password);
-      if (!isMatch) {
-        return res.status(401).json({ message: Locale.trans('login.failed') });
-      }
+			const isMatch: boolean = bcrypt.compareSync(password, user.password);
 
-      if (!user.confirmed) {
-        return res.status(401).json({ message: Locale.trans('account.unconfirmed') });
-      }
+			if (!isMatch) {
+				return res.status(401).json({ message: Locale.trans('login.failed') });
+			}
 
-      const { _id } = user;
-      const tokenInfo: TokenInfo = { id: _id };
-      const token: string = jwt.sign(tokenInfo, JWT_SECRET, { expiresIn: JWT_EXPIRE });
-      const refreshToken: string = jwt.sign(tokenInfo, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_EXPIRE });
+			if (!user.confirmed) {
+				return res.status(401).json({ message: Locale.trans('account.unconfirmed') });
+			}
 
-      await RedisManager.setValue(_id.toString(), refreshToken);
+			const { _id }: any = user;
+			const tokenInfo: TokenInfo = { id: _id };
+			const token: string = jwt.sign(tokenInfo, JWT_SECRET, { expiresIn: JWT_EXPIRE });
+			const refreshToken: string = jwt.sign(tokenInfo, JWT_REFRESH_SECRET, { expiresIn: JWT_REFRESH_EXPIRE });
 
-      return res.json({ token, expiresIn: JWT_EXPIRE, refreshToken });
-    } catch (err) {
-      Logger.error(err);
-      return res.status(500).json(internalError());
-    }
-  }
+			await RedisManager.set(_id.toString(), refreshToken, JWT_EXPIRE);
 
-  /**
+			return res.json({ refreshToken, token, expiresIn: JWT_EXPIRE });
+		} catch (err) {
+			logger.error(err);
+
+			return res.status(500).json(internalError());
+		}
+	}
+
+	/**
    * confirmAccount()
    *
    * Confirm user account with the token sent to his
@@ -123,27 +128,29 @@ class AuthController {
    *
    * @return Object
    */
-  public async confirmAccount(req: Request, res: Response, next: NextFunction): Promise<any> {
-    try {
-      const token = req.body.token;
+	public async confirmAccount(req: Request, res: Response, next: NextFunction): Promise<any> {
+		try {
+			const token: string = req.body.token;
 
-      const user: any = await UserModel.getOneBy({ email_token: token });
+			const user: any = await UserModel.getOneBy({ email_token: token });
 
-      if (!user) {
-        return res.status(400).json({ message: Locale.trans('bad.token') });
-      }
+			if (!user) {
+				return res.status(400).json({ message: Locale.trans('bad.token') });
+			}
 
-      const { _id } = user;
-      await UserModel.change(_id, { confirmed: true, email_token: null });
+			const { _id }: any = user;
 
-      return res.json({ message: Locale.trans('account.confirmed') });
-    } catch (err) {
-      Logger.error(err);
-      return res.status(500).json(internalError());
-    }
-  }
+			await UserModel.change(_id, { confirmed: true, email_token: null });
 
-  /**
+			return res.json({ message: Locale.trans('account.confirmed') });
+		} catch (err) {
+			logger.error(err);
+
+			return res.status(500).json(internalError());
+		}
+	}
+
+	/**
    * forgotPassword()
    *
    * Sent an email with a token to reset user password
@@ -154,40 +161,41 @@ class AuthController {
    *
    * @return Object
    */
-  public async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<any> {
-    const { email } = req.body;
+	public async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<any> {
+		const { email }: any = req.body;
 
-    try {
-      let user: any = await UserModel.findOne({ email });
+		try {
+			const user: any = await UserModel.findOne({ email });
 
-      if (!user) {
-        return res.status(404).json({ message: Locale.trans('no.user') });
-      }
+			if (!user) {
+				return res.status(404).json({ message: Locale.trans('no.user') });
+			}
 
-      const { _id } = user;
-      const tokenInfo: TokenInfo = { id: _id };
-      const token = jwt.sign(tokenInfo, JWT_EMAIL_SECRET, { expiresIn: JWT_EMAIL_EXPIRE });
+			const { _id }: any = user;
+			const tokenInfo: TokenInfo = { id: _id };
+			const token: string = jwt.sign(tokenInfo, JWT_EMAIL_SECRET, { expiresIn: JWT_EMAIL_EXPIRE });
 
-      const data = {
-        to: user.email,
-        subject: 'mail.subject.forgot.password',
-        template: 'forgot-password-email',
-        context: {
-          url: `${WEB_APP_URL}/${RESET_PASSWORD_PATH}?token=${token}`,
-          name: user.name,
-        },
-      };
+			const data: any = {
+				to: user.email,
+				subject: 'mail.subject.forgot.password',
+				template: 'forgot-password-email',
+				context: {
+					url: `${WEB_APP_URL}/${RESET_PASSWORD_PATH}?token=${token}`,
+					name: user.name,
+				},
+			};
 
-      Mailer.sendMail(data);
+			mailer.sendMail(data);
 
-      return res.json({ message: Locale.trans('email.success') });
-    } catch (err) {
-      Logger.error(err);
-      return res.status(500).json(internalError());
-    }
-  }
+			return res.json({ message: Locale.trans('email.success') });
+		} catch (err) {
+			logger.error(err);
 
-  /**
+			return res.status(500).json(internalError());
+		}
+	}
+
+	/**
    * resetPassword()
    *
    * Reset the password of an user
@@ -198,35 +206,39 @@ class AuthController {
    *
    * @return Object
    */
-  public async resetPassword(req: Request, res: Response, next: NextFunction): Promise<any> {
-    const resetToken = req.body.reset_token;
-    try {
-      jwt.verify(resetToken, JWT_EMAIL_SECRET, async (err: jwt.VerifyErrors, decoded: any) => {
-        if (err) {
-          Logger.error(err);
-          return res.status(400).json({ message: Locale.trans('token.expired')});
-        }
+	public async resetPassword(req: Request, res: Response, next: NextFunction): Promise<any> {
+		const resetToken: string = req.body.reset_token;
 
-        const user: any = await UserModel.get(decoded.id);
+		try {
+			jwt.verify(resetToken, JWT_EMAIL_SECRET, async (err: jwt.VerifyErrors, decoded: any) => {
+				if (err) {
+					logger.error(err);
 
-        if (!user) {
-          return res.status(400).json({ message: Locale.trans('bad.token') });
-        }
+					return res.status(400).json({ message: Locale.trans('token.expired') });
+				}
 
-        const password = bcrypt.hashSync(req.body.password, 10);
+				const user: any = await UserModel.get(decoded.id);
 
-        const { _id } = user;
-        await UserModel.change(_id, { password });
+				if (!user) {
+					return res.status(400).json({ message: Locale.trans('bad.token') });
+				}
 
-        return res.json({ message: Locale.trans('password.reset') });
-      });
-    } catch (err) {
-      Logger.error(err);
-      return res.status(500).json(internalError());
-    }
-  }
+				const password: string = bcrypt.hashSync(req.body.password, 10);
 
-  /**
+				const { _id }: any = user;
+
+				await UserModel.change(_id, { password });
+
+				return res.json({ message: Locale.trans('password.reset') });
+			});
+		} catch (err) {
+			logger.error(err);
+
+			return res.status(500).json(internalError());
+		}
+	}
+
+	/**
    * refreshToken()
    *
    * Generate a new access token for the user
@@ -237,34 +249,36 @@ class AuthController {
    *
    * @return Object
    */
-  public async refreshToken(req: Request, res: Response, next: NextFunction): Promise<any> {
-    const { token, uid } = req.body;
+	public async refreshToken(req: Request, res: Response, next: NextFunction): Promise<any> {
+		const { token, uid }: any = req.body;
 
-    try {
-      const tokenStorage: string|null = await RedisManager.getValue(uid);
+		try {
+			const tokenStorage: string|null = await RedisManager.get(uid);
 
-      if (tokenStorage !== token) {
-        return res.status(400).json({ message: Locale.trans('auth.token.failed')});
-      }
+			if (tokenStorage !== token) {
+				return res.status(400).json({ message: Locale.trans('auth.token.failed') });
+			}
 
-      const decoded = await decodeJwtToken(token, JWT_REFRESH_SECRET);
+			const decoded: TokenInfo = await decodeJwtToken(token, JWT_REFRESH_SECRET);
 
-      if (decoded.id !== uid) {
-        return res.status(400).json({ message: Locale.trans('auth.token.failed')});
-      }
+			if (decoded.id !== uid) {
+				return res.status(400).json({ message: Locale.trans('auth.token.failed') });
+			}
 
-      const tokenInfo: TokenInfo = { id: uid };
-      const newToken: string = jwt.sign(tokenInfo, JWT_SECRET, { expiresIn: JWT_EXPIRE });
+			const tokenInfo: TokenInfo = { id: uid };
+			const newToken: string = jwt.sign(tokenInfo, JWT_SECRET, { expiresIn: JWT_EXPIRE });
 
-      return res.json({ token: newToken });
-    } catch (err) {
-      Logger.error(err);
-      if (err instanceof jwt.TokenExpiredError) {
-        return res.status(400).json({ message: Locale.trans('token.expired')});
-      }
-      return res.status(500).json(internalError());
-    }
-  }
+			return res.json({ token: newToken });
+		} catch (err) {
+			logger.error(err);
+
+			if (err instanceof jwt.TokenExpiredError) {
+				return res.status(400).json({ message: Locale.trans('token.expired') });
+			}
+
+			return res.status(500).json(internalError());
+		}
+	}
 }
 
 export default new AuthController();

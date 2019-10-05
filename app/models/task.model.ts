@@ -81,4 +81,5 @@ class Model extends TaskModel {
 		return this.deleteMany(param);
 	}
 }
+
 export { Model };

@@ -16,14 +16,14 @@ import { CustomRequest } from '../types';
  *
  * @return Promise<any>
  */
-export const decodeJwtToken: object = (token: string, jwtSecret: string): Promise<any> => {
+export const decodeJwtToken: Function = (token: string, jwtSecret: string): Promise<any> => {
 	return new Promise((resolve: any, reject: any): any => {
 		jwt.verify(token, jwtSecret, (err: jwt.VerifyErrors, decoded: any) => {
 			if (err) {
-				return reject(err);
+				reject(err);
 			}
 
-			return resolve(decoded);
+			resolve(decoded);
 		});
 	});
 };

@@ -1,11 +1,13 @@
-import { Router } from "express";
+import { Router } from 'express';
 
-import AuthController from '../controllers/auth.controller';
-import UserValidator from '../validator/user.validator';
-import Validator from '../validator';
 import { API_BASE } from '../core/config';
 
-const { user } = Validator.methods;
+import userValidator from '../validator/user.validator';
+import { Validator } from '../validator';
+
+import authController from '../controllers/auth.controller';
+
+const { user }: any = Validator.methods;
 
 /**
  * Router configuration for authentication
@@ -13,28 +15,28 @@ const { user } = Validator.methods;
  * @class
  */
 class AuthRoute {
-  public router: Router;
+	public router: Router;
 
-  constructor() {
-    this.router = Router();
-    this.routes();
-  }
+	constructor() {
+		this.router = Router();
+		this.routes();
+	}
 
-  routes(): void {
-    const prefix = `${API_BASE}auth`;
+	routes(): void {
+		const prefix: string = `${API_BASE}auth`;
 
-    this.router.post(`${prefix}/register`, UserValidator.validate(user.createUser), AuthController.register);
+		this.router.post(`${prefix}/register`, userValidator.validate(user.createUser), authController.register);
 
-    this.router.post(`${prefix}/account/confirm`, UserValidator.validate(user.confirmAccount), AuthController.confirmAccount);
+		this.router.post(`${prefix}/account/confirm`, userValidator.validate(user.confirmAccount), authController.confirmAccount);
 
-    this.router.post(`${prefix}/login`, UserValidator.validate(user.loginUser), AuthController.login);
+		this.router.post(`${prefix}/login`, userValidator.validate(user.loginUser), authController.login);
 
-    this.router.post(`${prefix}/password/forgot`, UserValidator.validate(user.forgotPassword), AuthController.forgotPassword);
+		this.router.post(`${prefix}/password/forgot`, userValidator.validate(user.forgotPassword), authController.forgotPassword);
 
-    this.router.post(`${prefix}/password/reset`, UserValidator.validate(user.resetPassword), AuthController.resetPassword);
+		this.router.post(`${prefix}/password/reset`, userValidator.validate(user.resetPassword), authController.resetPassword);
 
-    this.router.post(`${prefix}/token/refresh`, UserValidator.validate(user.refreshToken), AuthController.refreshToken);
-  }
-};
+		this.router.post(`${prefix}/token/refresh`, userValidator.validate(user.refreshToken), authController.refreshToken);
+	}
+}
 
-export { AuthRoute }
+export { AuthRoute };

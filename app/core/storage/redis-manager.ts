@@ -1,71 +1,91 @@
 import redis, { RedisClient } from 'redis';
 
-/**
- * This class is responsible for read and write in Redis
- * @class
- *
- * @property {RedisClient} client - Redis client connection instance
- */
+import * as config from '../config';
+
 class RedisManager {
-  /**
-   * @private
-   * @static
-   * */
-  private static client: RedisClient;
+	private static client: RedisClient;
 
-  /**
-   * Create a connection instance to redis an returns it
-   * @public
-   * @static
-   *
-   * @return RedisClient
-   */
-  public static getInstance(): RedisClient {
-    if (!this.client) {
-      this.client = redis.createClient();
-    }
+	public static getInstance(): RedisClient {
+		if (!RedisManager.client) {
+			RedisManager.client = redis.createClient(config.REDIS_PORT, config.REDIS_HOST);
+		}
 
-    return this.client;
-  }
+		return RedisManager.client;
+	}
 
-  /**
-   * Get a value in Redis
-   * @public
-   * @async
-   * @static
-   *
-   * @param {string} key
-   *
-   * @return Promise<string|null>
-   */
-  public static getValue(key: string): Promise<string|null> {
-    return new Promise((resolve, fail) => {
-      RedisManager.getInstance().get(key, (error, result) => {
-        if (error) resolve(null);
-        resolve(result);
-      });
-    });
-  }
+	public static get(key: string): Promise<string|null> {
+		return new Promise<string|null>((resolve: any, reject: any): void => {
+			RedisManager.getInstance().get(key, (error: Error|null, result: string) => {
+				if (error) {
+					reject(error);
+				}
+				resolve(result ? result : null);
+			});
+		});
+	}
 
-  /**
-   * Set a value in Redis
-   * @public
-   * @async
-   * @static
-   *
-   * @param {string} key
-   * @param {string} value
-   *
-   * @return Promise<string|null>
-   */
-  public static setValue(key: string, value: string): Promise<boolean> {
-    return new Promise((resolve, fail) => {
-      RedisManager.getInstance().set(key, value, (error, result) => {
-        if (error) throw error;
-        resolve(true);
-      });
-    });
-  }
+	public static async set(key: string, value: string, expire: number = -1): Promise<boolean> {
+		if (expire > 0) {
+			return await RedisManager.setWithExpire(key, value, expire);
+		}
+
+		return await RedisManager.setWithoutExpire(key, value);
+	}
+
+	private static setWithExpire(key: string, value: string, expire: number): Promise<boolean> {
+		return new Promise((resolve: any, reject: any): any => {
+			RedisManager.getInstance().setex(key, expire, value, (error: Error|null) => {
+				if (error) {
+					reject(error);
+				}
+				resolve(true);
+			});
+		});
+	}
+
+	private static setWithoutExpire(key: string, value: string): Promise<boolean> {
+		return new Promise((resolve: any, reject: any): any => {
+			RedisManager.getInstance().set(key, value, (error: Error|null) => {
+				if (error) {
+					reject(error);
+				}
+				resolve(true);
+			});
+		});
+	}
+
+	public static delete(key: string): Promise<boolean> {
+		return new Promise((resolve: any, reject: any): any => {
+			RedisManager.getInstance().del(key, (error: Error|null) => {
+				if (error) {
+					reject(error);
+				}
+				resolve(true);
+			});
+		});
+	}
+
+	public static keys(pattern: string): Promise<string[]> {
+		return new Promise((resolve: any, reject: any): any => {
+			RedisManager.getInstance().keys(pattern, (error: Error|null, result: string[]) => {
+				if (error) {
+					reject(error);
+				}
+				resolve(result);
+			});
+		});
+	}
+
+	public static getValues(keys: string[]): Promise<string[]> {
+		return new Promise((resolve: any, reject: any): any => {
+			RedisManager.getInstance().mget(keys, (error: Error|null, result: string[]) => {
+				if (error) {
+					reject(error);
+				}
+				resolve(result);
+			});
+		});
+	}
 }
 
-export default RedisManager;
+export { RedisManager };

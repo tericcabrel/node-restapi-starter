@@ -1,11 +1,13 @@
 import { Router } from 'express';
 
-import TaskController from '../controllers/task.controller';
-import TaskValidator from '../validator/task.validator';
-import Validator from '../validator';
 import { API_BASE } from '../core/config';
 
-const { task } = Validator.methods;
+import { Validator } from '../validator';
+import taskValidator from '../validator/task.validator';
+
+import taskController from '../controllers/task.controller';
+
+const { task }: any = Validator.methods;
 
 /**
  * Router configuration for task
@@ -13,26 +15,26 @@ const { task } = Validator.methods;
  * @class
  */
 class TaskRoute {
-  public router: Router;
+	public router: Router;
 
-  constructor() {
-    this.router = Router();
-    this.routes();
-  }
+	constructor() {
+		this.router = Router();
+		this.routes();
+	}
 
-  routes(): void {
-    const prefix = `${API_BASE}tasks`;
+	routes(): void {
+		const prefix: string = `${API_BASE}tasks`;
 
-    this.router.post(`${prefix}/create`, TaskValidator.validate(task.createTask), TaskController.create);
+		this.router.post(`${prefix}/create`, taskValidator.validate(task.createTask), taskController.create);
 
-    this.router.put(`${prefix}/:id`, TaskValidator.validate(task.updateTask), TaskController.update);
+		this.router.put(`${prefix}/:id`, taskValidator.validate(task.updateTask), taskController.update);
 
-    this.router.delete(`${prefix}/:id`, TaskController.destroy);
+		this.router.delete(`${prefix}/:id`, taskController.destroy);
 
-    this.router.get(`${prefix}`, TaskController.all);
+		this.router.get(`${prefix}`, taskController.all);
 
-    this.router.get(`${prefix}/:id`, TaskController.one);
-  }
+		this.router.get(`${prefix}/:id`, taskController.one);
+	}
 }
 
 export { TaskRoute };

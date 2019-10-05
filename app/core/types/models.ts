@@ -1,6 +1,6 @@
 import { Schema, Document } from 'mongoose';
 
-export interface IModel extends Document {
+export interface IModel {
 	_id: Schema.Types.ObjectId;
 	created_at?: string;
 	updated_at?: string;
