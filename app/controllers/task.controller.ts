@@ -25,7 +25,7 @@ class TaskController {
    *
    * @return Object
    */
-	public async create(req: Request, res: Response, next: NextFunction): Promise<any> {
+	public static async create(req: Request, res: Response, next: NextFunction): Promise<any> {
 		try {
 			const { title, description, date, status, is_important, user }: any = req.body;
 
@@ -53,7 +53,7 @@ class TaskController {
    *
    * @return Object
    */
-	public async update(req: Request, res: Response, next: NextFunction): Promise<any> {
+	public static async update(req: Request, res: Response, next: NextFunction): Promise<any> {
 		const id: string = req.params.id;
 		const data: any = parseRequest(req.body, TaskModel.updateParams);
 		let updatedTask: Document|null = null;
@@ -85,7 +85,7 @@ class TaskController {
    *
    * @return Object
    */
-	public async destroy(req: Request, res: Response, next: NextFunction): Promise<any> {
+	public static async destroy(req: Request, res: Response, next: NextFunction): Promise<any> {
 		const id: string = req.params.id;
 
 		try {
@@ -110,7 +110,7 @@ class TaskController {
    *
    * @return Object
    */
-	public async all(req: Request, res: Response, next: NextFunction): Promise<any> {
+	public static async all(req: Request, res: Response, next: NextFunction): Promise<any> {
 		try {
 			const tasks: Document[] = await TaskModel.getAll();
 
@@ -135,7 +135,7 @@ class TaskController {
    *
    * @return Object
    */
-	public async one(req: Request, res: Response, next: NextFunction): Promise<any> {
+	public static async one(req: Request, res: Response, next: NextFunction): Promise<any> {
 		try {
 			const task: Document|null = await TaskModel.get(req.params.id);
 
@@ -156,4 +156,4 @@ class TaskController {
 	}
 }
 
-export default new TaskController();
+export { TaskController };

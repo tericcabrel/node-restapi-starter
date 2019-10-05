@@ -5,7 +5,7 @@ import { API_BASE } from '../core/config';
 import { Validator } from '../validator';
 import taskValidator from '../validator/task.validator';
 
-import taskController from '../controllers/task.controller';
+import { TaskController } from '../controllers/task.controller';
 
 const { task }: any = Validator.methods;
 
@@ -25,15 +25,15 @@ class TaskRoute {
 	routes(): void {
 		const prefix: string = `${API_BASE}tasks`;
 
-		this.router.post(`${prefix}/create`, taskValidator.validate(task.createTask), taskController.create);
+		this.router.post(`${prefix}/create`, taskValidator.validate(task.createTask), TaskController.create);
 
-		this.router.put(`${prefix}/:id`, taskValidator.validate(task.updateTask), taskController.update);
+		this.router.put(`${prefix}/:id`, taskValidator.validate(task.updateTask), TaskController.update);
 
-		this.router.delete(`${prefix}/:id`, taskController.destroy);
+		this.router.delete(`${prefix}/:id`, TaskController.destroy);
 
-		this.router.get(`${prefix}`, taskController.all);
+		this.router.get(`${prefix}`, TaskController.all);
 
-		this.router.get(`${prefix}/:id`, taskController.one);
+		this.router.get(`${prefix}/:id`, TaskController.one);
 	}
 }
 

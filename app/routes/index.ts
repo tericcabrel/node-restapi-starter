@@ -1,10 +1,10 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import * as path from 'path';
+import swig from 'swig';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import helmet from 'helmet';
-import * as path from 'path';
-import swig from 'swig';
 
 import * as config from '../core/config';
 

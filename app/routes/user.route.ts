@@ -5,7 +5,7 @@ import { API_BASE } from '../core/config';
 import userValidator from '../validator/user.validator';
 import { Validator } from '../validator';
 
-import userController from '../controllers/user.controller';
+import { UserController } from '../controllers/user.controller';
 
 const { user }: any = Validator.methods;
 
@@ -25,17 +25,17 @@ class UserRoute {
 	routes(): void {
 		const prefix: string = `${API_BASE}users`;
 
-		this.router.get(`${prefix}/me`, userController.me);
+		this.router.get(`${prefix}/me`, UserController.me);
 
-		this.router.get(`${prefix}`, userController.all);
+		this.router.get(`${prefix}`, UserController.all);
 
-		this.router.get(`${prefix}/:id`, userController.one);
+		this.router.get(`${prefix}/:id`, UserController.one);
 
-		this.router.put(`${prefix}`, userValidator.validate(user.updateUser), userController.update);
+		this.router.put(`${prefix}`, userValidator.validate(user.updateUser), UserController.update);
 
-		this.router.put(`${prefix}/password`, userValidator.validate(user.updateUserPassword), userController.updatePassword);
+		this.router.put(`${prefix}/password`, userValidator.validate(user.updateUserPassword), UserController.updatePassword);
 
-		this.router.delete(`${prefix}/:id`, userValidator.validate(user.deleteUser), userController.destroy);
+		this.router.delete(`${prefix}/:id`, userValidator.validate(user.deleteUser), UserController.destroy);
 	}
 }
 

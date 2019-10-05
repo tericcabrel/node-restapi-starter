@@ -37,7 +37,7 @@ class AuthController {
    *
    * @return Object
    */
-	public async register(req: Request, res: Response, next: NextFunction): Promise<any> {
+	public static async register(req: Request, res: Response, next: NextFunction): Promise<any> {
 		try {
 			const { name, username, email }: any = req.body;
 
@@ -81,7 +81,7 @@ class AuthController {
    *
    * @return Object
    */
-	public async login(req: Request, res: Response, next: NextFunction): Promise<any> {
+	public static async login(req: Request, res: Response, next: NextFunction): Promise<any> {
 		const { email, password }: any = req.body;
 
 		try {
@@ -128,7 +128,7 @@ class AuthController {
    *
    * @return Object
    */
-	public async confirmAccount(req: Request, res: Response, next: NextFunction): Promise<any> {
+	public static async confirmAccount(req: Request, res: Response, next: NextFunction): Promise<any> {
 		try {
 			const token: string = req.body.token;
 
@@ -161,7 +161,7 @@ class AuthController {
    *
    * @return Object
    */
-	public async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<any> {
+	public static async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<any> {
 		const { email }: any = req.body;
 
 		try {
@@ -206,7 +206,7 @@ class AuthController {
    *
    * @return Object
    */
-	public async resetPassword(req: Request, res: Response, next: NextFunction): Promise<any> {
+	public static async resetPassword(req: Request, res: Response, next: NextFunction): Promise<any> {
 		const resetToken: string = req.body.reset_token;
 
 		try {
@@ -249,7 +249,7 @@ class AuthController {
    *
    * @return Object
    */
-	public async refreshToken(req: Request, res: Response, next: NextFunction): Promise<any> {
+	public static async refreshToken(req: Request, res: Response, next: NextFunction): Promise<any> {
 		const { token, uid }: any = req.body;
 
 		try {
@@ -281,4 +281,4 @@ class AuthController {
 	}
 }
 
-export default new AuthController();
+export { AuthController };

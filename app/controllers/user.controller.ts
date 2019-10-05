@@ -29,7 +29,7 @@ class UserController {
    *
    * @return Object
    */
-	public async me(req: CustomRequest|any, res: Response, next: NextFunction): Promise<any> {
+	public static async me(req: CustomRequest|any, res: Response, next: NextFunction): Promise<any> {
 		try {
 			const user: Document|null = await UserModel.get(req.userId);
 
@@ -58,7 +58,7 @@ class UserController {
    *
    * @return Object
    */
-	public async all(req: Request, res: Response, next: NextFunction): Promise<any> {
+	public static async all(req: Request, res: Response, next: NextFunction): Promise<any> {
 		try {
 			const users: Document[] = await UserModel.getAll();
 
@@ -83,7 +83,7 @@ class UserController {
    *
    * @return Object
    */
-	public async one(req: Request, res: Response, next: NextFunction): Promise<any> {
+	public static async one(req: Request, res: Response, next: NextFunction): Promise<any> {
 		try {
 			const user: Document|null = await UserModel.get(req.params.id);
 
@@ -112,7 +112,7 @@ class UserController {
    *
    * @return Object
    */
-	public async updatePassword(req: CustomRequest|any, res: Response, next: NextFunction): Promise<any> {
+	public static async updatePassword(req: CustomRequest|any, res: Response, next: NextFunction): Promise<any> {
 		const id: string = req.userId;
 		const newPassword: string = req.body.new_password;
 		let updatedUser: Document|null = null;
@@ -149,7 +149,7 @@ class UserController {
    *
    * @return Object
    */
-	public async update(req: CustomRequest|any, res: Response, next: NextFunction): Promise<any> {
+	public static async update(req: CustomRequest|any, res: Response, next: NextFunction): Promise<any> {
 		const uid: string = req.body.uid;
 		const authUserId: string = req.userId;
 		const data: any = parseRequest(req.body, UserModel.updateParams);
@@ -186,7 +186,7 @@ class UserController {
    *
    * @return Object
    */
-	public async destroy(req: CustomRequest|any, res: Response, next: NextFunction): Promise<any> {
+	public static async destroy(req: CustomRequest|any, res: Response, next: NextFunction): Promise<any> {
 		const id: string = req.params.id;
 
 		try {
@@ -205,4 +205,4 @@ class UserController {
 	}
 }
 
-export default new UserController();
+export { UserController };
