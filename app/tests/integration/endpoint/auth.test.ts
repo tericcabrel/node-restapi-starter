@@ -7,6 +7,7 @@ import { Response } from 'superagent';
 import { server } from '../../../index';
 
 import mailer from '../../../core/mailer';
+import { Model as UserModel } from '../../../models/user.model';
 
 const expect: Chai.ExpectStatic = chai.expect;
 
@@ -30,7 +31,15 @@ describe.only('Auth endpoints', () => {
 	});
 
 	afterEach(() => {
+		sinon.restore();
+	});
 
+	after(async () => {
+		const user: any = await UserModel.findOne({ email: userData.email });
+
+		if (user) {
+			await UserModel.delete(user._id);
+		}
 	});
 
 	describe('Register user endpoint', () => {
@@ -180,6 +189,57 @@ describe.only('Auth endpoints', () => {
 
 					accessToken = res.body.token;
 					refreshToken = res.body.refreshToken;
+				});
+		});
+	});
+
+	describe('Forgot password endpoint', () => {
+		const uri: string = `${baseURL}/password/forgot`;
+
+		// POST - Fail to send reset email link
+		it('should fail to send reset email link due to invalid data', () => {
+			return chai.request(server)
+				.post(uri)
+				.send({})
+				.then((res: Response) => {
+					expect(res).to.have.status(422);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body).to.have.property('errors');
+				});
+		});
+
+		// POST - Fail to send reset email link
+		it('should fail to send reset email link due to non-existent email address', () => {
+			return chai.request(server)
+				.post(uri)
+				.send({ email: 'fake@email.com' })
+				.then((res: Response) => {
+					expect(res).to.have.status(404);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+				});
+		});
+
+		// POST - Send reset email link successfully
+		it('should send reset email link', () => {
+			const spySendMail: sinon.SinonStub = sinon.stub(mailer, 'sendMail');
+
+			return chai.request(server)
+				.post(uri)
+				.send({ email: userData.email })
+				.then((res: Response) => {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+
+					// console.log(spySendMail.getCall(0).args[0]);
+					const array: string[] = spySendMail.getCall(0).args[0].context.url.split('=');
+
+					emailToken = array[array.length - 1];
+
+					expect(emailToken).to.be.a('string');
+					expect(emailToken.length).to.greaterThan(0);
 				});
 		});
 	});
