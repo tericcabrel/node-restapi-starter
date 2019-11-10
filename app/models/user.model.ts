@@ -32,7 +32,7 @@ const userSchema: mongoose.Schema = new mongoose.Schema({
 	email_token: {
 		type: String,
 		required: false,
-		unique: true,
+		default: null,
 	},
 	avatar: {
 		type: String,
