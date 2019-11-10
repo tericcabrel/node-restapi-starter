@@ -20,7 +20,7 @@ let accessToken: string = '';
 let accessTokenWithBadUser: string = '';
 const fakeUserId: string = '5cee861d04d9f4214dc8dce6';
 
-describe.only('User endpoints', () => {
+describe('User endpoints', () => {
 	const userData: any = {
 		name: 'Jane DOE',
 		username: 'janed',
