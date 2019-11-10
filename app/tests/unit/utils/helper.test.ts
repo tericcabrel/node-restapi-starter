@@ -52,7 +52,6 @@ describe('Test Helpers methods', () => {
 		const result: InternalServerError = internalError();
 
 		expect(result).to.have.property('message');
-		expect(result.message).to.be.include('error');
 	});
 
 	it('should return The model User already exist', () => {
@@ -60,7 +59,7 @@ describe('Test Helpers methods', () => {
 	});
 
 	it('should return The model User not found', () => {
-		expect(notFound('User')).to.be.include('not found');
+		expect(notFound('User')).to.be.include('User');
 	});
 
 	describe('Get base URL request', () => {

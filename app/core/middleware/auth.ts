@@ -63,7 +63,7 @@ const authMiddleware: any = async (req: CustomRequest|any, res: Response, next: 
 	let routeName: string = '';
 
 	if (req.originalUrl) {
-		routeName = req.originalUrl.replace(config.API_BASE || '', '');
+		routeName = req.originalUrl.replace(config.API_BASE, '');
 	} else {
 		return res.status(401).json({ message: Locale.trans('unauthorized') });
 	}

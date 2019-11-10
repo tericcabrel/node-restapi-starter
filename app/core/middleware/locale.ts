@@ -14,9 +14,9 @@ import { Locale } from '../locale';
  */
 const localeMiddleware: any = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 	const availableLocales: string[] = Locale.getAvailableLocales();
-	const language: string = req.headers['accept-language'] || availableLocales[0];
+	const language: string | undefined = req.headers['accept-language'];
 
-	Locale.setLocale(availableLocales.indexOf(language) >= 0 ? language : availableLocales[0]);
+	Locale.setLocale(availableLocales.indexOf(language as string) >= 0 ? language : availableLocales[0]);
 
 	return next();
 };
