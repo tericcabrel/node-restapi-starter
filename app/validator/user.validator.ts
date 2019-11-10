@@ -114,15 +114,6 @@ export default {
 					check('password').not().isEmpty().withMessage(() => { return Locale.trans('input.required'); })
 						.isLength({ min: 6 })
 						.withMessage(() => { return Locale.trans('min.length', { value: '6' }); }),
-					check('password')
-						.custom(async (value: any, { req }: any) => {
-							const user: any = await UserModel.get(req.userId);
-							const isMatch: boolean = bcrypt.compareSync(req.body.password, user.password);
-
-							if (!isMatch) {
-								throw new Error(Locale.trans('invalid.password'));
-							}
-						}),
 					(req: Request, res: Response, next: NextFunction): void => {
 						validator.validationHandler(req, res, next);
 					},

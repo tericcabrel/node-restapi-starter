@@ -122,7 +122,17 @@ class UserController {
 				return res.status(403).json({ message: Locale.trans('unauthorized.resource') });
 			}
 
-			const user: Document|null = await UserModel.get(id);
+			const user: any = await UserModel.get(id);
+
+			if (!user) {
+				return res.status(404).json({ message: Locale.trans('model.not.found', { model: 'User' }) });
+			}
+
+			const isMatch: boolean = bcrypt.compareSync(req.body.password, user.password);
+
+			if (!isMatch) {
+				return res.status(400).json({ message: Locale.trans('invalid.password') });
+			}
 			const { _id }: any = user;
 
 			await UserModel.change(_id, { password: bcrypt.hashSync(newPassword, 10) });

@@ -127,4 +127,84 @@ describe.only('User endpoints', () => {
 				});
 		});
 	});
+
+	describe('Update user password', () => {
+		const uri: string = `${baseURL}/password`;
+		const newPassword: string =  'azerty';
+
+		it('should fail to update user password due to invalid data', () => {
+			return chai.request(server)
+				.put(uri)
+				.send({})
+				.set('x-access-token', accessToken)
+				.then((res: Response) => {
+					expect(res).to.have.status(422);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body).to.have.property('errors');
+				});
+		});
+
+		it('should fail to update user password due to bad resource owner', () => {
+			return chai.request(server)
+				.put(uri)
+				.send({ uid: userId, password: userData.password, new_password: newPassword })
+				.set('x-access-token', accessTokenWithBadUser)
+				.then((res: Response) => {
+					expect(res).to.have.status(403);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+				});
+		});
+
+		it('should fail to update user password due to non existent user', () => {
+			return chai.request(server)
+				.put(uri)
+				.send({ uid: fakeUserId, password: userData.password, new_password: newPassword })
+				.set('x-access-token', accessTokenWithBadUser)
+				.then((res: Response) => {
+					expect(res).to.have.status(404);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+				});
+		});
+
+		it('should fail to update user password due to invalid current password', () => {
+			return chai.request(server)
+				.put(uri)
+				.send({ uid: userId, password: 'bad-password', new_password: newPassword })
+				.set('x-access-token', accessToken)
+				.then((res: Response) => {
+					expect(res).to.have.status(400);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+				});
+		});
+
+		it('should update user password successfully', () => {
+			return chai.request(server)
+				.put(uri)
+				.send({ uid: userId, password: userData.password, new_password: newPassword })
+				.set('x-access-token', accessToken)
+				.then((res: Response) => {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+				});
+		});
+
+		it('should login the user successfully', () => {
+			return chai.request(server)
+				.post('/v1/auth/login')
+				.send({ password: newPassword, email: userData.email })
+				.then((res: Response) => {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(Object.keys(res.body).length).to.be.eq(3);
+
+					accessToken = res.body.token;
+				});
+		});
+	});
 });
