@@ -48,9 +48,8 @@ export const decodeJwtToken: Function = (token: string, jwtSecret: string): Prom
  *
  * @return any
  */
-const authMiddleware: any = (req: CustomRequest|any, res: Response, next: NextFunction): any => {
+const authMiddleware: any = async (req: CustomRequest|any, res: Response, next: NextFunction): Promise<any> => {
 	const token: any = req.headers['x-access-token'];
-
 	const allowedRoutes: string[] = [
 		'/',
 		'/api/documentation',
@@ -61,8 +60,8 @@ const authMiddleware: any = (req: CustomRequest|any, res: Response, next: NextFu
 		'auth/password/reset',
 		'token/refresh',
 	];
-
 	let routeName: string = '';
+
 	if (req.originalUrl) {
 		routeName = req.originalUrl.replace(config.API_BASE || '', '');
 	} else {
@@ -74,12 +73,8 @@ const authMiddleware: any = (req: CustomRequest|any, res: Response, next: NextFu
 	}
 
 	if (token) {
-		jwt.verify(token, config.JWT_SECRET, (err: jwt.VerifyErrors, decoded: any) => {
-			if (err) {
-				logger.error(err);
-
-				return res.status(401).json({ message: Locale.trans('unauthorized') });
-			}
+		try {
+			const decoded: any = await decodeJwtToken(token, config.JWT_SECRET);
 
 			if (!decoded.id) {
 				return res.status(401).json({ message: Locale.trans('unauthorized') });
@@ -89,10 +84,12 @@ const authMiddleware: any = (req: CustomRequest|any, res: Response, next: NextFu
 			req.userId = decoded.id;
 
 			return next();
-		});
-	} else {
-		return res.status(401).json({ message: Locale.trans('unauthorized') });
+		} catch (err) {
+			logger.error(err);
+		}
 	}
+
+	return res.status(401).json({ message: Locale.trans('unauthorized') });
 };
 
 export { authMiddleware };
