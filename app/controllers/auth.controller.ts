@@ -168,7 +168,7 @@ class AuthController {
 			const user: any = await UserModel.findOne({ email });
 
 			if (!user) {
-				return res.status(404).json({ message: Locale.trans('no.user') });
+				return res.status(404).json({ message: Locale.trans('no.user.test.ts') });
 			}
 
 			const { _id }: any = user;
@@ -222,7 +222,7 @@ class AuthController {
 			const user: any = await UserModel.get(decoded.id);
 
 			if (!user) {
-				return res.status(404).json({ message: Locale.trans('no.user') });
+				return res.status(404).json({ message: Locale.trans('no.user.test.ts') });
 			}
 
 			const password: string = bcrypt.hashSync(req.body.password, 10);

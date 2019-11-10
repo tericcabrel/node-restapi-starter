@@ -19,7 +19,7 @@ let emailToken: string = '';
 let accessToken: string = '';
 let refreshToken: string = '';
 
-describe('Auth endpoints', () => {
+describe('User endpoints', () => {
 	const userData: any = {
 		name: 'John DOE',
 		username: 'jdoe',

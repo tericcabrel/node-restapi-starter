@@ -144,7 +144,7 @@ export default {
 							const user: Document|null = await UserModel.get(mongoose.Types.ObjectId(req.body.uid));
 
 							if (!user) {
-								throw new Error(Locale.trans('user.not.exist'));
+								throw new Error(Locale.trans('user.test.ts.not.exist'));
 							}
 						}),
 					(req: Request, res: Response, next: NextFunction): void => {

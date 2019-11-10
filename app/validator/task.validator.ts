@@ -20,7 +20,7 @@ export default {
 					check('status').not().isEmpty().withMessage(() => { return Locale.trans('input.empty'); }),
 					check('date').not().isEmpty().withMessage(() => { return Locale.trans('input.empty'); }),
 					check('is_important').not().isEmpty().withMessage(() => { return Locale.trans('input.empty'); }),
-					check('user').not().isEmpty().withMessage(() => { return Locale.trans('input.empty'); }),
+					check('user.test.ts').not().isEmpty().withMessage(() => { return Locale.trans('input.empty'); }),
 					check('title')
 						.custom(async (value: any, { req }: any) => {
 							const { title, user }: any = req.body;
