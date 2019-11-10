@@ -170,6 +170,12 @@ class UserController {
 				return res.status(403).json({ message: Locale.trans('unauthorized.resource') });
 			}
 
+			const user: any = await UserModel.get(authUserId);
+
+			if (!user) {
+				return res.status(404).json({ message: Locale.trans('model.not.found', { model: 'User' }) });
+			}
+
 			if (data !== null) {
 				await UserModel.change(uid, data);
 			}
