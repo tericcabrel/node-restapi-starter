@@ -3,6 +3,7 @@ import sinon from 'sinon';
 
 import { createJwtToken } from '../../../core/middleware/auth';
 import { localeMiddleware } from '../../../core/middleware/locale';
+import { JWT_EXPIRE, JWT_SECRET } from '../../../core/config';
 
 const expect: Chai.ExpectStatic = chai.expect;
 
@@ -30,7 +31,7 @@ describe('Locale middleware', () => {
 		}
 	}
 
-	const token: string = createJwtToken({ id: '5cee861d04d9f4214dc8dce6' });
+	const token: string = createJwtToken({ id: '5cee861d04d9f4214dc8dce6' }, JWT_SECRET, JWT_EXPIRE);
 
 	beforeEach(() => {
 		mockRequest = {

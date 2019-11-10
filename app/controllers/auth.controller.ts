@@ -208,29 +208,30 @@ class AuthController {
    */
 	public static async resetPassword(req: Request, res: Response, next: NextFunction): Promise<any> {
 		const resetToken: string = req.body.reset_token;
+		let decoded: any;
 
 		try {
-			jwt.verify(resetToken, JWT_EMAIL_SECRET, async (err: jwt.VerifyErrors, decoded: any) => {
-				if (err) {
-					logger.error(err);
+			decoded = await decodeJwtToken(resetToken, JWT_EMAIL_SECRET);
+		} catch (err) {
+			logger.error(err);
 
-					return res.status(400).json({ message: Locale.trans('token.expired') });
-				}
+			return res.status(400).json({ message: Locale.trans('bad.token') });
+		}
 
-				const user: any = await UserModel.get(decoded.id);
+		try {
+			const user: any = await UserModel.get(decoded.id);
 
-				if (!user) {
-					return res.status(400).json({ message: Locale.trans('bad.token') });
-				}
+			if (!user) {
+				return res.status(404).json({ message: Locale.trans('no.user') });
+			}
 
-				const password: string = bcrypt.hashSync(req.body.password, 10);
+			const password: string = bcrypt.hashSync(req.body.password, 10);
 
-				const { _id }: any = user;
+			const { _id }: any = user;
 
-				await UserModel.change(_id, { password });
+			await UserModel.change(_id, { password });
 
-				return res.json({ message: Locale.trans('password.reset') });
-			});
+			return res.json({ message: Locale.trans('password.reset') });
 		} catch (err) {
 			logger.error(err);
 

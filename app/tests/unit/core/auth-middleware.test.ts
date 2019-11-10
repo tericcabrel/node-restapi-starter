@@ -2,6 +2,7 @@ import chai from 'chai';
 import sinon from 'sinon';
 
 import { authMiddleware, createJwtToken } from '../../../core/middleware/auth';
+import { JWT_EXPIRE, JWT_SECRET } from '../../../core/config';
 
 const expect: Chai.ExpectStatic = chai.expect;
 
@@ -29,7 +30,7 @@ describe('Auth middleware', () => {
 		}
 	}
 
-	const token: string = createJwtToken({ id: '5cee861d04d9f4214dc8dce6' });
+	const token: string = createJwtToken({ id: '5cee861d04d9f4214dc8dce6' }, JWT_SECRET, JWT_EXPIRE);
 
 	beforeEach(() => {
 		mockRequest = {
@@ -77,7 +78,7 @@ describe('Auth middleware', () => {
 	it('should return 401 due to inconsistent data in the decoded token', async () => {
 		const nextSpy: sinon.SinonSpy = sinon.spy();
 
-		mockRequest.headers['x-access-token'] = createJwtToken({ data: '5cee861d04d9f4214dc8dce6' });
+		mockRequest.headers['x-access-token'] = createJwtToken({ data: '5cee861d04d9f4214dc8dce6' }, JWT_SECRET, JWT_EXPIRE);
 		mockRequest.originalUrl = '/v1/tasks/create';
 
 		const res: any = await authMiddleware(mockRequest, new MockResponse() as any, nextSpy);

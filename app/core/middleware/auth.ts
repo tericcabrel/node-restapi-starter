@@ -7,15 +7,19 @@ import { logger } from '../logger';
 import { Locale } from '../locale';
 import { CustomRequest } from '../types';
 
+export type CreateJWTTokenFunction = (payload: any, jwtSecret: string, jwtExpire: number) => string;
+
 /**
  * Create a JWT Token
  *
- * @param {any} payload: Information to encode in
+ * @param {any} payload Information to encode
+ * @param {string} jwtSecret JWT Secret
+ * @param {number} jwtExpire JWT Expiration date
  *
  * @return string
  */
-export const createJwtToken: Function = (payload: any): string => {
-	return jwt.sign(payload, config.JWT_SECRET, { expiresIn: config.JWT_EXPIRE });
+export const createJwtToken: CreateJWTTokenFunction = (payload: any, jwtSecret: string, jwtExpire: number): string => {
+	return jwt.sign(payload, jwtSecret, { expiresIn: jwtExpire });
 };
 
 /**

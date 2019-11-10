@@ -5,6 +5,7 @@ import { Response } from 'superagent';
 import { ITaskModel } from '../../../core/types/models';
 import { server } from '../../../index';
 import { createJwtToken } from '../../../core/middleware/auth';
+import * as config  from '../../../core/config';
 
 const expect: Chai.ExpectStatic = chai.expect;
 
@@ -21,7 +22,7 @@ describe('Tasks endpoints', () => {
 		user: '5cee861d04d9f4214dc8dce6',
 	};
 
-	const token: string = createJwtToken({ id: taskData.user });
+	const token: string = createJwtToken({ id: taskData.user }, config.JWT_SECRET, config.JWT_EXPIRE);
 
 	beforeEach(() => {
 

@@ -8,6 +8,8 @@ import { server } from '../../../index';
 
 import mailer from '../../../core/mailer';
 import { Model as UserModel } from '../../../models/user.model';
+import { createJwtToken } from '../../../core/middleware/auth';
+import * as config  from '../../../core/config';
 
 const expect: Chai.ExpectStatic = chai.expect;
 
@@ -244,4 +246,77 @@ describe.only('Auth endpoints', () => {
 		});
 	});
 
+	describe('Reset password endpoint', () => {
+		const uri: string = `${baseURL}/password/reset`;
+		const password: string = 'azerty';
+
+		// POST - Fail to send reset the password
+		it('should fail to reset the password due to invalid data', () => {
+			return chai.request(server)
+				.post(uri)
+				.send({})
+				.then((res: Response) => {
+					expect(res).to.have.status(422);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body).to.have.property('errors');
+				});
+		});
+
+		// POST - Fail to reset the password
+		it('should fail to reset the password due to bad token', () => {
+			return chai.request(server)
+				.post(uri)
+				.send({ password, reset_token: 'token' })
+				.then((res: Response) => {
+					expect(res).to.have.status(400);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+				});
+		});
+
+		// POST - Fail to reset the password
+		it('should fail to reset the password due to non-existent user', () => {
+			return chai.request(server)
+				.post(uri)
+				.send({
+					password,
+					reset_token: createJwtToken(
+						{ id: '5cee861d04d9f4214dc8dce6' }, config.JWT_EMAIL_SECRET, config.JWT_EMAIL_EXPIRE,
+					)})
+				.then((res: Response) => {
+					expect(res).to.have.status(404);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+				});
+		});
+
+		// POST - Reset the password successfully
+		it('should reset the password', () => {
+			return chai.request(server)
+				.post(uri)
+				.send({ password, reset_token: emailToken })
+				.then((res: Response) => {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+				});
+		});
+
+		// POST - Login the user successfully
+		it('should login the user successfully', () => {
+			return chai.request(server)
+				.post(`${baseURL}/login`)
+				.send({ password, email: userData.email })
+				.then((res: Response) => {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(Object.keys(res.body).length).to.be.eq(3);
+
+					accessToken = res.body.token;
+					refreshToken = res.body.refreshToken;
+				});
+		});
+	});
 });
