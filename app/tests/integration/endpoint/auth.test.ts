@@ -13,6 +13,8 @@ const expect: Chai.ExpectStatic = chai.expect;
 chai.use(chaiHttp);
 
 let emailToken: string = '';
+let accessToken: string = '';
+let refreshToken: string = '';
 
 describe.only('Auth endpoints', () => {
 	const userData: any = {
@@ -70,6 +72,59 @@ describe.only('Auth endpoints', () => {
 		});
 	});
 
+	describe('Login user\'s endpoint failure', () => {
+		const uri: string = `${baseURL}/login`;
+
+		// POST - Fail to login
+		it('should fail to login the user due to invalid data', () => {
+			return chai.request(server)
+				.post(uri)
+				.send({})
+				.then((res: Response) => {
+					expect(res).to.have.status(422);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body).to.have.property('errors');
+				});
+		});
+
+		// POST - Fail to login
+		it('should fail to login the user due to non-existent email address', () => {
+			return chai.request(server)
+				.post(uri)
+				.send({ email: 'fake@email.com', password: 'password' })
+				.then((res: Response) => {
+					expect(res).to.have.status(400);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+				});
+		});
+
+		// POST - Fail to login
+		it('should fail to login the user due to invalid password', () => {
+			return chai.request(server)
+				.post(uri)
+				.send({ email: userData.email, password: 'password' })
+				.then((res: Response) => {
+					expect(res).to.have.status(400);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+				});
+		});
+
+		// POST - Fail to login
+		it('should fail to login the user due to unconfirmed account', () => {
+			return chai.request(server)
+				.post(uri)
+				.send({ email: userData.email, password: userData.password })
+				.then((res: Response) => {
+					expect(res).to.have.status(400);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+				});
+		});
+	});
+
 	describe('Confirm account of the user endpoint', () => {
 		const uri: string = `${baseURL}/account/confirm`;
 
@@ -107,6 +162,24 @@ describe.only('Auth endpoints', () => {
 					expect(res).to.have.status(200);
 					expect(res).to.be.json;
 					expect(res.body).to.be.an('object');
+				});
+		});
+	});
+
+	describe('Login user\'s endpoint success', () => {
+		// POST - Login the user successfully
+		it('should login the user successfully', () => {
+			return chai.request(server)
+				.post(`${baseURL}/login`)
+				.send({ email: userData.email, password: userData.password })
+				.then((res: Response) => {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(Object.keys(res.body).length).to.be.eq(3);
+
+					accessToken = res.body.token;
+					refreshToken = res.body.refreshToken;
 				});
 		});
 	});

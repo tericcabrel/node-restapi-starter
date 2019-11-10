@@ -88,17 +88,17 @@ class AuthController {
 			const user: any = await UserModel.findOne({ email });
 
 			if (!user) {
-				return res.status(401).json({ message: Locale.trans('login.failed') });
+				return res.status(400).json({ message: Locale.trans('login.failed') });
 			}
 
 			const isMatch: boolean = bcrypt.compareSync(password, user.password);
 
 			if (!isMatch) {
-				return res.status(401).json({ message: Locale.trans('login.failed') });
+				return res.status(400).json({ message: Locale.trans('login.failed') });
 			}
 
 			if (!user.confirmed) {
-				return res.status(401).json({ message: Locale.trans('account.unconfirmed') });
+				return res.status(400).json({ message: Locale.trans('account.unconfirmed') });
 			}
 
 			const { _id }: any = user;
