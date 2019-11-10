@@ -260,22 +260,12 @@ class AuthController {
 				return res.status(400).json({ message: Locale.trans('auth.token.failed') });
 			}
 
-			const decoded: TokenInfo = await decodeJwtToken(token, JWT_REFRESH_SECRET);
-
-			if (decoded.id !== uid) {
-				return res.status(400).json({ message: Locale.trans('auth.token.failed') });
-			}
-
 			const tokenInfo: TokenInfo = { id: uid };
 			const newToken: string = jwt.sign(tokenInfo, JWT_SECRET, { expiresIn: JWT_EXPIRE });
 
 			return res.json({ token: newToken });
 		} catch (err) {
 			logger.error(err);
-
-			if (err instanceof jwt.TokenExpiredError) {
-				return res.status(400).json({ message: Locale.trans('token.expired') });
-			}
 
 			return res.status(500).json(internalError());
 		}

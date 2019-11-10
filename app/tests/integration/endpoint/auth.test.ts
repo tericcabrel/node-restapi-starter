@@ -8,7 +8,7 @@ import { server } from '../../../index';
 
 import mailer from '../../../core/mailer';
 import { Model as UserModel } from '../../../models/user.model';
-import { createJwtToken } from '../../../core/middleware/auth';
+import {createJwtToken, decodeJwtToken} from '../../../core/middleware/auth';
 import * as config  from '../../../core/config';
 
 const expect: Chai.ExpectStatic = chai.expect;
@@ -316,6 +316,68 @@ describe.only('Auth endpoints', () => {
 
 					accessToken = res.body.token;
 					refreshToken = res.body.refreshToken;
+				});
+		});
+	});
+
+	describe('Refresh token endpoint',  () => {
+		const uri: string = `${baseURL}/token/refresh`;
+
+		// POST - Fail to refresh the token
+		it('should fail to refresh the token due to invalid data', () => {
+			return chai.request(server)
+				.post(uri)
+				.send({})
+				.set('x-access-token', accessToken)
+				.then((res: Response) => {
+					expect(res).to.have.status(422);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body).to.have.property('errors');
+				});
+		});
+
+		// POST - Fail to reset the password
+		it('should fail to refresh the token due to bad token', async () => {
+			const decoded: any = await decodeJwtToken(accessToken, config.JWT_SECRET);
+
+			return chai.request(server)
+				.post(uri)
+				.send({ uid: decoded.id, token: accessToken })
+				.set('x-access-token', accessToken)
+				.then((res: Response) => {
+					expect(res).to.have.status(400);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+				});
+		});
+
+		// POST - Refresh the token successfully
+		it('should refresh the token', async () => {
+			const decoded: any = await decodeJwtToken(accessToken, config.JWT_SECRET);
+
+			return chai.request(server)
+				.post(uri)
+				.send({ uid: decoded.id, token: refreshToken })
+				.set('x-access-token', accessToken)
+				.then((res: Response) => {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+
+					accessToken = res.body.token;
+				});
+		});
+
+		// POST - Get all tasks
+		it('should get all tasks', () => {
+			return chai.request(server)
+				.get('/v1/tasks')
+				.set('x-access-token', accessToken)
+				.then((res: Response) => {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('array');
 				});
 		});
 	});
