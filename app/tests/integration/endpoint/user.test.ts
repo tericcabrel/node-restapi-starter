@@ -18,6 +18,7 @@ chai.use(chaiHttp);
 let userId: string = '';
 let accessToken: string = '';
 let accessTokenWithBadUser: string = '';
+const fakeUserId: string = '5cee861d04d9f4214dc8dce6';
 
 describe.only('User endpoints', () => {
 	const userData: any = {
@@ -43,7 +44,7 @@ describe.only('User endpoints', () => {
 
 		accessToken = jwt.sign(tokenInfo, config.JWT_SECRET, { expiresIn: config.JWT_EXPIRE });
 		accessTokenWithBadUser = jwt.sign(
-			{ id: '5cee861d04d9f4214dc8dce6' }, config.JWT_SECRET, { expiresIn: config.JWT_EXPIRE },
+			{ id: fakeUserId }, config.JWT_SECRET, { expiresIn: config.JWT_EXPIRE },
 		);
 	});
 
@@ -63,6 +64,18 @@ describe.only('User endpoints', () => {
 		}
 	});
 
+	it('Should get all the users', () => {
+		return chai.request(server)
+			.get(baseURL)
+			.set('x-access-token', accessToken)
+			.then((res: Response) => {
+				expect(res).to.have.status(200);
+				expect(res).to.be.json;
+				expect(res.body).to.be.an('array');
+				expect(res.body.map((u: any) => u.email).includes(userData.email)).to.eq(true);
+			});
+	});
+
 	describe('Get user info by the access token', () => {
 		const uri: string = `${baseURL}/me`;
 
@@ -80,6 +93,31 @@ describe.only('User endpoints', () => {
 		it('Should found the user', () => {
 			return chai.request(server)
 				.get(uri)
+				.set('x-access-token', accessToken)
+				.then((res: Response) => {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body.email).to.eq(userData.email);
+				});
+		});
+	});
+
+	describe('Get user info by ID', () => {
+		it('Should not found the user', () => {
+			return chai.request(server)
+				.get(`${baseURL}/${fakeUserId}`)
+				.set('x-access-token', accessToken)
+				.then((res: Response) => {
+					expect(res).to.have.status(404);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+				});
+		});
+
+		it('Should found the user', () => {
+			return chai.request(server)
+				.get(`${baseURL}/${userId}`)
 				.set('x-access-token', accessToken)
 				.then((res: Response) => {
 					expect(res).to.have.status(200);
