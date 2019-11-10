@@ -117,6 +117,19 @@ describe('Tasks endpoints', () => {
 			});
 	});
 
+	// GET - Not found the task
+	it('should not found the task', () => {
+		return chai.request(server)
+			.get(`/v1/tasks/${taskData.user}`)
+			.set('x-access-token', token)
+			.then((res: Response) => {
+				expect(res).to.have.status(404);
+			})
+			.catch((err: Response) => {
+				expect(err).to.have.status(404);
+			});
+	});
+
 	// DELETE - Delete a task
 	it('should delete a task', () => {
 		return chai.request(server)

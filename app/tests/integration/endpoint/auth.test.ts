@@ -8,7 +8,7 @@ import { server } from '../../../index';
 
 import mailer from '../../../core/mailer';
 import { Model as UserModel } from '../../../models/user.model';
-import {createJwtToken, decodeJwtToken} from '../../../core/middleware/auth';
+import { createJwtToken, decodeJwtToken } from '../../../core/middleware/auth';
 import * as config  from '../../../core/config';
 
 const expect: Chai.ExpectStatic = chai.expect;
@@ -19,7 +19,7 @@ let emailToken: string = '';
 let accessToken: string = '';
 let refreshToken: string = '';
 
-describe.only('Auth endpoints', () => {
+describe('Auth endpoints', () => {
 	const userData: any = {
 		name: 'John DOE',
 		username: 'jdoe',
