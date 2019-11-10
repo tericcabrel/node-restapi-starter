@@ -272,4 +272,18 @@ describe.only('User endpoints', () => {
 				});
 		});
 	});
+
+	describe('Delete user', () => {
+		it('should delete the user successfully', () => {
+			return chai.request(server)
+				.delete(`${baseURL}/${userId}`)
+				.send({ id: userId })
+				.set('x-access-token', accessToken)
+				.then((res: Response) => {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+				});
+		});
+	});
 });
