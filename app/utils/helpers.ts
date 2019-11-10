@@ -38,22 +38,6 @@ export const notFound: Function = (modelName: string): string => {
 };
 
 /**
- * Hash a password
- *
- * @param {string} password - Password to hash
- *
- * @return Promise<string>
- */
-export const hashPassword: Function = async (password: string): Promise<string> => {
-	return await new Promise((resolve: any, reject: any): void => {
-		bcrypt.hash(password, 10, (err: any, hash: string) => {
-			if (err) reject(err);
-			resolve(hash);
-		});
-	});
-};
-
-/**
  * Parse the body of the request
  *
  * @param {Object} requestBody - Content of the request's body
