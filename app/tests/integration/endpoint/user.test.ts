@@ -7,7 +7,7 @@ import * as jwt from 'jsonwebtoken';
 import { Response } from 'superagent';
 
 import { server } from '../../../index';
-import { Model as UserModel } from '../../../models/user.model';
+import { UserModel } from '../../../models/user.model';
 import { TokenInfo } from '../../../core/types';
 import * as config  from '../../../core/config';
 
@@ -36,6 +36,8 @@ describe('User endpoints', () => {
 	const baseURL: string = '/v1/users';
 
 	before(async () => {
+		await UserModel.deleteMany({ });
+
 		const hashedPassword: string = bcrypt.hashSync(userData.password, 10);
 		const user: any = new UserModel({ ...userData, password: hashedPassword, email_token: null, confirmed: true });
 
@@ -69,10 +71,10 @@ describe('User endpoints', () => {
 		const user1: any = await UserModel.findOne({ email: userData1.email });
 
 		if (user) {
-			await UserModel.delete(user._id);
+			await UserModel.deleteOne({ _id: user._id });
 		}
 		if (user1) {
-			await UserModel.delete(user1._id);
+			await UserModel.deleteOne({ _id: user1._id });
 		}
 	});
 

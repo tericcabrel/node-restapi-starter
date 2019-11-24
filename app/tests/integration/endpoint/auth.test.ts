@@ -7,7 +7,7 @@ import { Response } from 'superagent';
 import { server } from '../../../index';
 
 import mailer from '../../../core/mailer';
-import { Model as UserModel } from '../../../models/user.model';
+import { UserModel } from '../../../models/user.model';
 import { createJwtToken, decodeJwtToken } from '../../../core/middleware/auth';
 import * as config  from '../../../core/config';
 
@@ -40,7 +40,7 @@ describe('User endpoints', () => {
 		const user: any = await UserModel.findOne({ email: userData.email });
 
 		if (user) {
-			await UserModel.delete(user._id);
+			await UserModel.deleteOne({ _id: user._id });
 		}
 	});
 

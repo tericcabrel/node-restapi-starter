@@ -7,6 +7,8 @@ import { server } from '../../../index';
 import { createJwtToken } from '../../../core/middleware/auth';
 import * as config  from '../../../core/config';
 
+import { TaskModel } from '../../../models/task.model';
+
 const expect: Chai.ExpectStatic = chai.expect;
 
 chai.use(chaiHttp);
@@ -23,6 +25,10 @@ describe('Tasks endpoints', () => {
 	};
 
 	const token: string = createJwtToken({ id: taskData.user }, config.JWT_SECRET, config.JWT_EXPIRE);
+
+	before(async () => {
+		await TaskModel.deleteMany({});
+	});
 
 	beforeEach(() => {
 
