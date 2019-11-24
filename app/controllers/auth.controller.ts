@@ -12,7 +12,7 @@ import { decodeJwtToken } from '../core/middleware/auth';
 
 import { internalError } from '../utils/helpers';
 
-import { Model as UserModel } from '../models/user.model';
+import { UserModel } from '../models/user.model';
 
 const {
 	JWT_SECRET, JWT_EXPIRE, JWT_EMAIL_SECRET, JWT_EMAIL_EXPIRE, JWT_REFRESH_SECRET, JWT_REFRESH_EXPIRE,
@@ -132,7 +132,7 @@ class AuthController {
 		try {
 			const token: string = req.body.token;
 
-			const user: any = await UserModel.getOneBy({ email_token: token });
+			const user: any = await UserModel.findOne({ email_token: token });
 
 			if (!user) {
 				return res.status(400).json({ message: Locale.trans('bad.token') });
@@ -140,7 +140,7 @@ class AuthController {
 
 			const { _id }: any = user;
 
-			await UserModel.change(_id, { confirmed: true, email_token: null });
+			await UserModel.findOneAndUpdate({ _id }, { confirmed: true, email_token: null });
 
 			return res.json({ message: Locale.trans('account.confirmed') });
 		} catch (err) {
@@ -219,7 +219,7 @@ class AuthController {
 		}
 
 		try {
-			const user: any = await UserModel.get(decoded.id);
+			const user: any = await UserModel.findOne({ _id: decoded.id });
 
 			if (!user) {
 				return res.status(404).json({ message: Locale.trans('no.user.test.ts') });
@@ -229,7 +229,7 @@ class AuthController {
 
 			const { _id }: any = user;
 
-			await UserModel.change(_id, { password });
+			await UserModel.findOneAndUpdate({ _id }, { password });
 
 			return res.json({ message: Locale.trans('password.reset') });
 		} catch (err) {

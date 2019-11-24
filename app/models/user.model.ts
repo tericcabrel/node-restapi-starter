@@ -50,44 +50,10 @@ const userSchema: mongoose.Schema = new mongoose.Schema({
 // tslint:disable-next-line:variable-name
 const UserModel: MongooseModel<Document, {}> = mongoose.model('User', userSchema);
 
-class Model extends UserModel {
-	public static updateParams: string[] = [
-		'name',
-		'username',
-		'gender',
-	];
+const userUpdateParams: string[] = [
+	'name',
+	'username',
+	'gender',
+];
 
-	public static async getAll(): Promise<Document[]> {
-		return this.find({}).sort('-created_at').exec();
-	}
-
-	public static async add(item: any): Promise<Document> {
-		return item.save();
-	}
-
-	public static async delete(id: any): Promise<any> {
-		return this.deleteOne({ _id: id });
-	}
-
-	public static async get(id: any): Promise<Document|null> {
-		return this.findOne({ _id: id });
-	}
-
-	public static async change(id: any, data: any): Promise<Document|null> {
-		return this.findOneAndUpdate({ _id: id }, data);
-	}
-
-	public static async getBy(param: any): Promise<any> {
-		return this.find(param);
-	}
-
-	public static async getOneBy(param: any): Promise<Document|null> {
-		return this.findOne(param);
-	}
-
-	public static async bulkDelete(param: any): Promise<any> {
-		return this.deleteMany(param);
-	}
-}
-
-export { Model };
+export { UserModel, userUpdateParams };

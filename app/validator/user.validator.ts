@@ -1,10 +1,9 @@
-import * as bcrypt from 'bcryptjs';
 import mongoose, { Document } from 'mongoose';
 import { check, ValidationChain } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
 
 import { Validator } from './index';
-import { Model as UserModel } from '../models/user.model';
+import { UserModel } from '../models/user.model';
 import { Locale } from '../core/locale';
 
 export default {
@@ -24,7 +23,7 @@ export default {
 						.withMessage(() => { return Locale.trans('min.length', { value: '6' }); }),
 					check('email')
 						.custom(async (value: any, { req }: any) => {
-							const user: Document|null = await UserModel.getOneBy({ email: req.body.email });
+							const user: Document|null = await UserModel.findOne({ email: req.body.email });
 
 							if (user) {
 								throw new Error(Locale.trans('input.taken'));
@@ -32,7 +31,7 @@ export default {
 						}),
 					check('username')
 						.custom(async (value: any, { req }: any) => {
-							const user: Document|null = await UserModel.getOneBy({ username: req.body.username });
+							const user: Document|null = await UserModel.findOne({ username: req.body.username });
 
 							if (user) {
 								throw new Error(Locale.trans('input.taken'));
@@ -93,7 +92,7 @@ export default {
 					check('username')
 						.optional()
 						.custom(async (value: any, { req }: any) => {
-							const user: Document|null = await UserModel.getOneBy({ username: req.body.username });
+							const user: Document|null = await UserModel.findOne({ username: req.body.username });
 							// const { _id } = user;
 
 							if (user && user._id.toString() !== req.body.uid) {
@@ -132,7 +131,7 @@ export default {
 					check('token').not().isEmpty().withMessage(() => { return Locale.trans('input.empty'); }),
 					check('uid')
 						.custom(async (value: any, { req }: any) => {
-							const user: Document|null = await UserModel.get(mongoose.Types.ObjectId(req.body.uid));
+							const user: Document|null = await UserModel.findOne({ _id: mongoose.Types.ObjectId(req.body.uid) });
 
 							if (!user) {
 								throw new Error(Locale.trans('user.test.ts.not.exist'));

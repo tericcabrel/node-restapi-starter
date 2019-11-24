@@ -8,7 +8,7 @@ import { Locale } from '../core/locale';
 
 import { internalError, parseRequest } from '../utils/helpers';
 
-import { Model as UserModel } from '../models/user.model';
+import { UserModel, userUpdateParams } from '../models/user.model';
 
 import { UserTransformer } from '../transformers/user';
 
@@ -31,7 +31,7 @@ class UserController {
    */
 	public static async me(req: CustomRequest|any, res: Response, next: NextFunction): Promise<any> {
 		try {
-			const user: Document|null = await UserModel.get(req.userId);
+			const user: Document|null = await UserModel.findOne({ _id: req.userId });
 
 			if (!user) {
 				return res.status(404).json({ message: Locale.trans('no.user') });
@@ -60,8 +60,7 @@ class UserController {
    */
 	public static async all(req: Request, res: Response, next: NextFunction): Promise<any> {
 		try {
-			const users: Document[] = await UserModel.getAll();
-
+			const users: Document[] = await UserModel.find({}).sort('-created_at').exec();
 			const transformer: UserTransformer = new UserTransformer(users);
 
 			return res.json(await transformer.transform());
@@ -85,7 +84,7 @@ class UserController {
    */
 	public static async one(req: Request, res: Response, next: NextFunction): Promise<any> {
 		try {
-			const user: Document|null = await UserModel.get(req.params.id);
+			const user: Document|null = await UserModel.findOne({ _id: req.params.id });
 
 			if (!user) {
 				return res.status(404).json({ message: Locale.trans('model.not.found', { model: 'User' }) });
@@ -122,7 +121,7 @@ class UserController {
 				return res.status(403).json({ message: Locale.trans('unauthorized.resource') });
 			}
 
-			const user: any = await UserModel.get(id);
+			const user: any = await UserModel.findOne(id);
 
 			if (!user) {
 				return res.status(404).json({ message: Locale.trans('model.not.found', { model: 'User' }) });
@@ -135,8 +134,8 @@ class UserController {
 			}
 			const { _id }: any = user;
 
-			await UserModel.change(_id, { password: bcrypt.hashSync(newPassword, 10) });
-			updatedUser = await UserModel.get(_id);
+			await UserModel.findOneAndUpdate({ _id }, { password: bcrypt.hashSync(newPassword, 10) });
+			updatedUser = await UserModel.findOne({ _id });
 
 			const transformer: UserTransformer = new UserTransformer(updatedUser);
 
@@ -162,7 +161,7 @@ class UserController {
 	public static async update(req: CustomRequest|any, res: Response, next: NextFunction): Promise<any> {
 		const uid: string = req.body.uid;
 		const authUserId: string = req.userId;
-		const data: any = parseRequest(req.body, UserModel.updateParams);
+		const data: any = parseRequest(req.body, userUpdateParams);
 		let updatedUser: Document|null = null;
 
 		try {
@@ -170,16 +169,16 @@ class UserController {
 				return res.status(403).json({ message: Locale.trans('unauthorized.resource') });
 			}
 
-			const user: any = await UserModel.get(authUserId);
+			const user: any = await UserModel.findOne({ _id: uid });
 
 			if (!user) {
 				return res.status(404).json({ message: Locale.trans('model.not.found', { model: 'User' }) });
 			}
 
 			if (data !== null) {
-				await UserModel.change(uid, data);
+				await UserModel.findOneAndUpdate({ _id: uid }, data);
 			}
-			updatedUser = await UserModel.get(uid);
+			updatedUser = await UserModel.findOne({ _id: uid });
 
 			const transformer: UserTransformer = new UserTransformer(updatedUser);
 
@@ -207,7 +206,7 @@ class UserController {
 
 		try {
 			if (req.userId === id) {
-				await UserModel.delete(id);
+				await UserModel.deleteOne({ _id: id });
 			}
 
 			// TODO check if authenticated user has privilege to delete
