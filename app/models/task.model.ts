@@ -40,46 +40,12 @@ const taskSchema: mongoose.Schema = new mongoose.Schema({
 // tslint:disable-next-line:variable-name
 const TaskModel: MongooseModel<Document> = mongoose.model('Task', taskSchema);
 
-class Model extends TaskModel {
-	public static updateParams: string[] = [
-		'title',
-		'description',
-		'date',
-		'status',
-		'is_important',
-	];
+const taskUpdateParams: string[] = [
+	'title',
+	'description',
+	'date',
+	'status',
+	'is_important',
+];
 
-	public static async getAll(): Promise<Document[]> {
-		return this.find({}).sort('-created_at').exec();
-	}
-
-	public static async add(item: any): Promise<Document> {
-		return item.save();
-	}
-
-	public static async delete(id: any): Promise<any> {
-		return this.deleteOne({ _id: id });
-	}
-
-	public static async get(id: any): Promise<Document|null> {
-		return this.findOne({ _id: id });
-	}
-
-	public static async change(id: any, data: any): Promise<Document|null> {
-		return this.findOneAndUpdate({ _id: id }, data);
-	}
-
-	public static async getBy(param: any): Promise<any> {
-		return this.find(param);
-	}
-
-	public static async getOneBy(param: any): Promise<Document|null> {
-		return this.findOne(param);
-	}
-
-	public static async bulkDelete(param: any): Promise<any> {
-		return this.deleteMany(param);
-	}
-}
-
-export { Model };
+export { TaskModel, taskUpdateParams };

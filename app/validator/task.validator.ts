@@ -5,7 +5,7 @@ import { Document } from 'mongoose';
 import { Locale } from '../core/locale';
 import { Validator } from './index';
 
-import { Model as TaskModel } from '../models/task.model';
+import { TaskModel } from '../models/task.model';
 import { REGEX } from '../utils/constants';
 
 export default {
@@ -56,7 +56,7 @@ export default {
 					check('title')
 						.optional()
 						.custom(async (value: any, { req }: any) => {
-							const task: any = await TaskModel.get(req.params.id);
+							const task: any = await TaskModel.findOne({ _id: req.params.id });
 							const taskExist: Document|null = await TaskModel.findOne({
 									title: req.body.title,
 									user: task.user,

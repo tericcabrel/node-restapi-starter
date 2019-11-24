@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { Document } from 'mongoose';
 
-import { Model as TaskModel } from '../models/task.model';
+import { TaskModel, taskUpdateParams } from '../models/task.model';
 
 import { Locale } from '../core/locale';
 import { logger } from '../core/logger';
@@ -30,11 +30,9 @@ class TaskController {
 			const { title, description, date, status, is_important, user }: any = req.body;
 
 			const param: any = { title, description, date, status, is_important, user };
-			const task: TaskModel = new TaskModel(param);
+			const task: Document[] = await TaskModel.create([param]);
 
-			const savedTask: Document = await TaskModel.add(task);
-
-			return res.json(savedTask);
+			return res.json(task[0]);
 		} catch (err) {
 			logger.error(err);
 
@@ -55,18 +53,16 @@ class TaskController {
    */
 	public static async update(req: Request, res: Response, next: NextFunction): Promise<any> {
 		const id: string = req.params.id;
-		const data: any = parseRequest(req.body, TaskModel.updateParams);
+		const data: any = parseRequest(req.body, taskUpdateParams);
 		let updatedTask: Document|null = null;
 
 		try {
 			if (data !== null) {
-				await TaskModel.change(id, data);
+				await TaskModel.findOneAndUpdate({ _id: id }, data);
 			}
-			updatedTask = await TaskModel.get(id);
+			updatedTask = await TaskModel.findOne({ _id: id });
 
-			const transformer: TaskTransformer = new TaskTransformer(updatedTask);
-
-			return res.json(await transformer.transform());
+			return res.json(updatedTask);
 		} catch (err) {
 			logger.error(err);
 
@@ -89,7 +85,7 @@ class TaskController {
 		const id: string = req.params.id;
 
 		try {
-			await TaskModel.delete(id);
+			await TaskModel.deleteOne({ _id: id });
 
 			return res.json({ message: Locale.trans('model.deleted', { model: 'Task' }) });
 		} catch (err) {
@@ -112,7 +108,7 @@ class TaskController {
    */
 	public static async all(req: Request, res: Response, next: NextFunction): Promise<any> {
 		try {
-			const tasks: Document[] = await TaskModel.getAll();
+			const tasks: Document[] = await TaskModel.find({}).sort('-created_at').exec();
 
 			const transformer: TaskTransformer = new TaskTransformer(tasks);
 
@@ -137,7 +133,7 @@ class TaskController {
    */
 	public static async one(req: Request, res: Response, next: NextFunction): Promise<any> {
 		try {
-			const task: Document|null = await TaskModel.get(req.params.id);
+			const task: Document|null = await TaskModel.findOne({ _id: req.params.id });
 
 			if (!task) {
 				return res.status(404).json({
