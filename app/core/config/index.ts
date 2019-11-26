@@ -1,6 +1,22 @@
 import * as dotenv from 'dotenv';
+import * as path from 'path';
 
 dotenv.config();
+
+let configPath: string;
+
+switch (process.env.NODE_ENV) {
+	case 'test':
+		configPath = path.resolve(__dirname, '../../.env.test');
+		break;
+	case 'production':
+		configPath = path.resolve(__dirname, '../../.env.prod');
+		break;
+	default:
+		configPath = path.resolve(__dirname, '../../.env');
+}
+
+dotenv.config({ path: configPath });
 
 const e: any = process.env;
 

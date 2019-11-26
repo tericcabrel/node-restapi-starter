@@ -8,7 +8,7 @@
     "start": "nodemon --watch '*.ts' --exec 'ts-node' ./app/index.ts",
     "dev": "ts-node-dev --respawn --transpileOnly ./app/index.ts",
     "prod": "tsc && node ./build/index.js",
-    "test": "mocha -r ts-node/register ./app/tests/**/*.ts --recursive --exit --timeout 5000",
+    "test": "NODE_ENV=test mocha -r ts-node/register ./app/tests/**/*.ts --recursive --exit --timeout 5000",
     "api-designer": "api-designer --port 7011",
     "apidoc": "raml2html --theme raml2html-slate-theme -i public/apidoc/api.raml -o public/apidoc/index.html",
     "coverage": "nyc mocha -r ts-node/register ./app/tests/**/*.ts --recursive --exit"
