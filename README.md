@@ -7,6 +7,7 @@ A starter project to build REST API in node.js with Typescript, Express Framewor
 - [Installation](#installation)
 - [Documentation](#documentation)
 - [Internationalization](#internationalization)
+- [Docker](#docker)
 - [Test](#test)
 
 ## Features
@@ -28,12 +29,12 @@ This features are available in this project
 ## Installation
 - Clone the repository
 ```bash
-$ git clone https://github.com/tericcabrel/node-restapi-starter.git <project_name>
+$ git clone https://github.com/tericcabrel/node-restapi-starter.git [project_name]
 ```
 
 - Install dependencies
 ```bash
-$ cd <project_name>
+$ cd [project_name]
 $ yarn
 ```
 - Create the configuration file and update with your local config
@@ -60,7 +61,7 @@ Open the browser and navigate to http://localhost:4000
 The documentation for the available endpoints have already wrote.
 We just have to continue by adding our own. For that, you need to:<br>
 1- Zip the content of the folder `public/apidoc`<br>
-2- Import the zip in the API designer
+2- Import the zip in the API designer<br>
 3- Add or edit specification
 
 - Generate API Documentation
@@ -76,6 +77,12 @@ For that, you need to set the language in the header of the request
 { "Accept-Header":  "fr"} 
 ````
 API will respond in french. Only french and english are available but it's easy to add another language 
+
+## Docker
+To run the project with docker, just run
+```bash
+$ docker-compose up --build
+```
 
 ## Test
 Mocha and Chai is used to write unit test.
