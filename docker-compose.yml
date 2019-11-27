@@ -1,0 +1,29 @@
+version: "2"
+services:
+  server:
+    container_name: node-starter
+    restart: always
+    build: ./
+    volumes:
+      - ./:/var/node-starter
+      - ./node_modules:/var/node-starter/node_modules
+    ports:
+      - "7010:7010"
+    links:
+      - mongodb
+    environment:
+      - NODE_ENV=development
+    networks:
+      - nodstnetwork
+  mongodb:
+    container_name: node-starter-mongo
+    image: mongo
+    volumes:
+      - /Users/zegeek/Desktop/CODING/Docker/volumes/node-starter:/data/db
+    ports:
+      - "27000:27017"
+    networks:
+      - nodstnetwork
+networks:
+  nodstnetwork:
+    driver: bridge
