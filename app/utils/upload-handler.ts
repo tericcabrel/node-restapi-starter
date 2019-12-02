@@ -1,11 +1,17 @@
 import * as path from 'path';
-import multer from 'multer';
+import * as express from 'express';
+// @ts-ignore
+import multer, { Express } from 'multer';
 
 /** Storage Avatar */
 const storageAvatar: multer.StorageEngine = multer.diskStorage({
 	destination: './public/uploads/avatars',
-	filename(req: any, file: any, callback: (error: Error | null, filename: string) => void): void {
-		callback(null, `${new Date().getTime().toString()}-${file.fieldname}${path.extname(file.originalname)}`);
+	filename(
+	  req: Express.Request,
+	  file: Express.Multer.File,
+	  fn: (error: Error | null, filename: string) => void,
+	): void {
+		fn(null, `${new Date().getTime().toString()}-${file.fieldname}${path.extname(file.originalname)}`);
 	},
 });
 
@@ -22,6 +28,18 @@ export const uploadAvatar: any = multer({
 		callback(new Error('Invalid file type. Only pictures are allowed !'), false);
 	},
 }).single('picture');
+
+export const pictureUploadHandler: Function = async (req: express.Request, res: express.Response): Promise<any> => {
+	return new Promise((resolve: any, reject: any): void => {
+		uploadAvatar(req, res, (error: Error) => {
+			if (error) {
+				return reject(error);
+			}
+
+			return resolve({ file: req.file, body: req.body });
+		});
+	});
+};
 
 /** Storage File */
 /*

@@ -2,7 +2,7 @@ import * as bcrypt from 'bcryptjs';
 import { Request, Response, NextFunction } from 'express';
 import { Document } from 'mongoose';
 
-import { CustomRequest } from '../core/types';
+import {CustomRequest, UploadedFile} from '../core/types';
 import { logger } from '../core/logger';
 import { Locale } from '../core/locale';
 
@@ -11,6 +11,7 @@ import { internalError, parseRequest } from '../utils/helpers';
 import { UserModel, userUpdateParams } from '../models/user.model';
 
 import { UserTransformer } from '../transformers/user';
+import {pictureUploadHandler} from '../utils/upload-handler';
 
 /**
  * Controller for user details
@@ -217,6 +218,25 @@ class UserController {
 
 			return res.status(500).json({ message: internalError() });
 		}
+	}
+
+	/**
+	 * updatePicture()
+	 *
+	 * Change the picture of the user authenticated
+	 *
+	 * @param {Request} req: Request object
+	 * @param {Response} res: Response object
+	 * @param {NextFunction} next: NextFunction object
+	 *
+	 * @return Object
+	 */
+	public static async updatePicture(req: CustomRequest|any, res: Response, next: NextFunction): Promise<any> {
+		const result: any = await pictureUploadHandler(req, res);
+		const file: UploadedFile = result.file;
+		const { action }: any = result.body;
+
+		return res.json({ message: 'Ok' });
 	}
 }
 
