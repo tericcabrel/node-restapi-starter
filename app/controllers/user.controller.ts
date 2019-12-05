@@ -1,16 +1,21 @@
 import * as bcrypt from 'bcryptjs';
+import * as path from 'path';
+import * as fs from 'fs';
+
 import { Request, Response, NextFunction } from 'express';
 import { Document } from 'mongoose';
 
-import { CustomRequest } from '../core/types';
+import { CustomRequest, UploadedFile } from '../core/types';
 import { logger } from '../core/logger';
 import { Locale } from '../core/locale';
 
 import { internalError, parseRequest } from '../utils/helpers';
+import { pictureUploadHandler } from '../utils/upload-handler';
 
 import { UserModel, userUpdateParams } from '../models/user.model';
 
 import { UserTransformer } from '../transformers/user';
+import { UPLOAD_AVATAR_PATH } from '../core/config';
 
 /**
  * Controller for user details
@@ -212,6 +217,64 @@ class UserController {
 			// TODO check if authenticated user has privilege to delete
 
 			return res.json({ message: Locale.trans('model.deleted', { model: 'User' }) });
+		} catch (err) {
+			logger.error(err);
+
+			return res.status(500).json({ message: internalError() });
+		}
+	}
+
+	/**
+	 * updatePicture()
+	 *
+	 * Change the picture of the user authenticated
+	 *
+	 * @param {Request} req: Request object
+	 * @param {Response} res: Response object
+	 * @param {NextFunction} next: NextFunction object
+	 *
+	 * @return Object
+	 */
+	public static async updatePicture(req: CustomRequest|any, res: Response, next: NextFunction): Promise<any> {
+		let result: any;
+		let updatedUser: Document|null = null;
+		const id: string = req.userId;
+
+		try {
+			result = await pictureUploadHandler(req, res);
+		} catch (e) {
+			return res.status(422).json({ errors: { picture: e.message } });
+		}
+
+		try {
+			const file: UploadedFile = result.file;
+			const { action }: any = result.body;
+
+			const user: any = await UserModel.findOne({ _id: id });
+
+			if (!user) {
+				return res.status(404).json({ message: Locale.trans('model.not.found', { model: 'User' }) });
+			}
+
+			if (action === 'u') {
+				await UserModel.findOneAndUpdate({ _id: id }, { avatar: file.filename });
+			} else if (action === 'd') {
+				if (user.avatar !== null) {
+					const avatarPath: string = path.resolve(__dirname, '../..', UPLOAD_AVATAR_PATH, user.avatar);
+
+					if (fs.existsSync(avatarPath)) {
+						fs.unlinkSync(avatarPath);
+					}
+				}
+
+				await UserModel.findOneAndUpdate({ _id: id }, { avatar: null });
+			}
+
+			updatedUser = await UserModel.findOne({ _id: id });
+
+			const transformer: UserTransformer = new UserTransformer(updatedUser);
+
+			return res.json(await transformer.transform());
 		} catch (err) {
 			logger.error(err);
 

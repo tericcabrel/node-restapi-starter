@@ -5,7 +5,7 @@
   "main": "./build/index.js",
   "scripts": {
     "tsc": "tsc",
-    "start": "nodemon --watch '*.ts' --exec 'ts-node' ./app/index.ts",
+    "start": "nodemon --watch '*.ts' --watch '.env' --watch '*.json' --exec 'ts-node' ./app/index.ts",
     "dev": "ts-node-dev --respawn --transpileOnly ./app/index.ts",
     "prod": "tsc && node ./build/index.js",
     "test": "NODE_ENV=test mocha -r ts-node/register ./app/tests/**/*.ts --recursive --exit --timeout 5000",
