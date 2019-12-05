@@ -35,6 +35,8 @@ class UserRoute {
 
 		this.router.put(`${prefix}/password`, userValidator.validate(user.updateUserPassword), UserController.updatePassword);
 
+		this.router.put(`${prefix}/picture`, UserController.updatePicture);
+
 		this.router.delete(`${prefix}/:id`, userValidator.validate(user.deleteUser), UserController.destroy);
 	}
 }

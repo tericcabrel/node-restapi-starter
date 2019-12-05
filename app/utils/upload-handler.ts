@@ -2,15 +2,12 @@ import * as path from 'path';
 import * as express from 'express';
 // @ts-ignore
 import multer, { Express } from 'multer';
+import { UPLOAD_AVATAR_PATH } from '../core/config';
 
 /** Storage Avatar */
 const storageAvatar: multer.StorageEngine = multer.diskStorage({
-	destination: './public/uploads/avatars',
-	filename(
-	  req: Express.Request,
-	  file: Express.Multer.File,
-	  fn: (error: Error | null, filename: string) => void,
-	): void {
+	destination: UPLOAD_AVATAR_PATH,
+	filename(req: Express.Request, file: Express.Multer.File, fn: (error: Error | null, filename: string) => void): void {
 		fn(null, `${new Date().getTime().toString()}-${file.fieldname}${path.extname(file.originalname)}`);
 	},
 });
@@ -20,7 +17,7 @@ export const uploadAvatar: any = multer({
 	limits: { fileSize: 2 * 1024 * 1024 },
 	fileFilter(req: any, file: any, callback: (error: Error | null, acceptFile: boolean) => void): void {
 		const extension: boolean = ['.png', '.jpg', '.jpeg'].indexOf(path.extname(file.originalname).toLowerCase()) >= 0;
-		const mimeType: boolean = file.mimetype.indexOf('image') > 0;
+		const mimeType: boolean = file.mimetype.indexOf('image') >= 0;
 
 		if (extension && mimeType) {
 			return callback(null, true);
