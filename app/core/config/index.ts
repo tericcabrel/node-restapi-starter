@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import * as fs from 'fs';
 
 dotenv.config();
 
@@ -7,16 +8,20 @@ let configPath: string;
 
 switch (process.env.NODE_ENV) {
 	case 'test':
-		configPath = path.resolve(__dirname, '../../.env.test');
+		configPath = path.resolve(__dirname, '../../../.env.test');
 		break;
 	case 'production':
-		configPath = path.resolve(__dirname, '../../.env.prod');
+		configPath = path.resolve(__dirname, '../../../.env.prod');
 		break;
 	default:
-		configPath = path.resolve(__dirname, '../../.env');
+		configPath = path.resolve(__dirname, '../../../.env');
 }
 
-dotenv.config({ path: configPath });
+const envConfig: dotenv.DotenvParseOutput = dotenv.parse(fs.readFileSync(configPath));
+
+for (const k in envConfig) {
+	process.env[k] = envConfig[k];
+}
 
 const e: any = process.env;
 

@@ -51,7 +51,7 @@ describe('Redis Manager', () => {
 
 			expect(result).to.be.an('array');
 			expect(result).to.have.length(2);
-			expect(result[0]).to.be.eq(key);
+			expect(result.includes(key)).to.be.true;
 		});
 
 		it('should return an empty array of key', async () => {
