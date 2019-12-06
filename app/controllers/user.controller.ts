@@ -246,6 +246,8 @@ class UserController {
 			return res.status(422).json({ errors: { picture: e.message } });
 		}
 
+		console.log(result);
+
 		try {
 			const file: UploadedFile = result.file;
 			const { action }: any = result.body;
