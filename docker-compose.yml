@@ -3,17 +3,23 @@ services:
   server:
     container_name: node-starter
     restart: always
-    build: ./
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - ./:/var/node-starter
       - ./node_modules:/var/node-starter/node_modules
+    env_file: .env
     ports:
       - "7010:7010"
     links:
       - mongodb
       - redisdb
+    depends_on:
+      - mongodb
+      - redisdb
     environment:
-      - NODE_ENV=development
+      WAIT_HOSTS: redisdb:6379, mongodb:27017
     networks:
       - nodstnetwork
   mongodb:
@@ -23,6 +29,11 @@ services:
       - /Users/zegeek/Desktop/CODING/Docker/volumes/node-starter/mongo:/data/db
     ports:
       - "27000:27017"
+    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$DB_USER
+      - MONGO_INITDB_ROOT_PASSWORD=$DB_PASSWORD
+      - MONGO_INITDB_DATABASE=$DB_NAME
     networks:
       - nodstnetwork
   redisdb:
