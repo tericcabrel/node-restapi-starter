@@ -4,7 +4,6 @@ npm-debug.log
 yarn-error.log
 .env
 .git
-build
 coverage
 .nyc_output
-docker rmi -f fcf13938e2cf b99df4f141b4 5dba2d0271f3 f77d1c2f26d1 7d1ef5826b4a 37a0c879b8b2 5236f3e45821
+.idea

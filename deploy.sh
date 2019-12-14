@@ -31,8 +31,12 @@ if [[ $1 == 'run' ]]; then
 		nano ./build/.env.prod
 	fi
 
-    # Launch the application with pm2
-	NODE_ENV=production pm2 start ./build/index.js --name ${APP_NAME}
+    if [[ $2 == 'docker' ]]; then
+        docker-compose -f docker-compose.prod.yml up --build
+    else
+        # Launch the application with pm2
+        NODE_ENV=production pm2 start ./build/index.js --name ${APP_NAME}
+	fi
 elif [[ $1 == 'restart' ]]; then
 	pm2 restart ${APP_NAME}
 elif [[ $1 == 'stop' ]]; then

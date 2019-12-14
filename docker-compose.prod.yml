@@ -1,0 +1,50 @@
+version: "2"
+services:
+  server:
+    container_name: node-starter-prod
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    volumes:
+      - /Users/zegeek/Desktop/CODING/Docker/volumes/node-starter-prod/uploads:/var/node-starter/public/uploads
+    env_file: ./build/.env.prod
+    ports:
+      - "6435:6435"
+    links:
+      - mongodb
+      - redisdb
+    depends_on:
+      - mongodb
+      - redisdb
+    environment:
+      WAIT_HOSTS: redisdb:6379, mongodb:27017
+      NODE_ENV: production
+    networks:
+      - nodsprodtnetwork
+  mongodb:
+    container_name: node-starter-prod-mongo
+    image: mongo
+    volumes:
+      - /Users/zegeek/Desktop/CODING/Docker/volumes/node-starter-prod/mongo:/data/db
+    ports:
+      - "27000:27017"
+    env_file: ./build/.env.prod
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$DB_USER
+      - MONGO_INITDB_ROOT_PASSWORD=$DB_PASSWORD
+      - MONGO_INITDB_DATABASE=$DB_NAME
+    networks:
+      - nodsprodtnetwork
+  redisdb:
+    container_name: node-starter-prod-redis
+    image: redis
+    volumes:
+      - /Users/zegeek/Desktop/CODING/Docker/volumes/node-starter-prod/redis:/data/db
+    ports:
+      - "6479:6379"
+    networks:
+      - nodsprodtnetwork
+networks:
+  nodsprodtnetwork:
+    driver: bridge
