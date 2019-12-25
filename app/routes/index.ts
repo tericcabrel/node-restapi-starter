@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as path from 'path';
-import swig from 'swig';
+import expressHandlebars from 'express-handlebars';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -37,18 +37,10 @@ class Routes {
 		app.use(helmet());
 		app.use(cors());
 
-		app.engine('html', swig.renderFile);
+		app.engine('handlebars', expressHandlebars());
+		app.set('view engine', 'handlebars');
 
-		app.set('view engine', 'html');
 		app.set('views', path.resolve(__dirname, '../views'));
-
-		// Swig will cache templates for you, but you can disable
-		// that and use Express's caching instead, if you like:
-		app.set('view cache', false);
-
-		// To disable Swig's cache, do the following:
-		swig.setDefaults({ cache: false });
-		// NOTE: You should always cache templates in a production environment.
 
 		app.use(localeMiddleware);
 
