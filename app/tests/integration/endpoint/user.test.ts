@@ -10,6 +10,8 @@ import { server } from '../../../index';
 import { UserModel } from '../../../models/user.model';
 import { TokenInfo } from '../../../core/types';
 import * as config  from '../../../core/config';
+import * as path from 'path';
+import * as fs from 'fs';
 
 const expect: Chai.ExpectStatic = chai.expect;
 
@@ -273,6 +275,77 @@ describe('User endpoints', () => {
 					expect(res.body.username).to.eq('janis');
 				});
 		});
+	});
+
+	describe('Update user\'s picture', () => {
+		const uploadFolderPath: string = path.resolve(__dirname, '../../../../', config.UPLOAD_AVATAR_PATH);
+		const picturePath: string = path.resolve(__dirname, '../../data/picture.png');
+
+		before(() => {
+			if (!fs.existsSync(uploadFolderPath)) {
+				fs.mkdirSync(uploadFolderPath, { recursive: true });
+			}
+		});
+
+		after(() => {
+			if (fs.existsSync(uploadFolderPath)) {
+				const files: string[] = fs.readdirSync(uploadFolderPath);
+
+				for (const file of files) {
+					fs.unlinkSync(path.resolve(uploadFolderPath, file));
+				}
+				fs.rmdirSync(uploadFolderPath);
+
+				const split: string[] = uploadFolderPath.split('/');
+
+				split.pop();
+				fs.rmdirSync(split.join('/'));
+			}
+		});
+
+		it('should update user\'s picture', () => {
+			return chai.request(server)
+				.put(`${baseURL}/picture`)
+				.set('x-access-token', accessToken)
+				.accept('multipart/form-data')
+				.field('action', 'u')
+				.attach('picture', picturePath)
+				.then((res: Response) => {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body).to.have.property('_id');
+				});
+		});
+
+		it('should update user\'s picture by deleting the current one', () => {
+			return chai.request(server)
+				.put(`${baseURL}/picture`)
+				.set('x-access-token', accessToken)
+				.accept('multipart/form-data')
+				.field('action', 'd')
+				.then((res: Response) => {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body).to.have.property('_id');
+				});
+		});
+
+		/*it('should fail to update user\'s picture due to invalid data', () => {
+			return chai.request(server)
+				.put(`${baseURL}/picture`)
+				.set('x-access-token', accessToken)
+				.accept('multipart/form-data')
+				.field('action', 'u')
+				.attach('picture', picturePath)
+				.then((res: Response) => {
+					expect(res).to.have.status(200);
+					expect(res).to.be.json;
+					expect(res.body).to.be.an('object');
+					expect(res.body).to.have.property('_id');
+				});
+		});*/
 	});
 
 	describe('Delete user', () => {

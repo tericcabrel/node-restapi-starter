@@ -1,0 +1,23 @@
+FROM node:12.2.0-alpine
+
+RUN mkdir -p /var/node-starter-prod
+
+RUN chmod -R 777 /var/node-starter-prod
+
+WORKDIR /var/node-starter-prod
+COPY package.json ./
+
+# The directory itself is not copied, just its contents.
+COPY build app
+
+RUN yarn --silent
+
+EXPOSE 6435
+
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait /wait
+RUN chmod +x /wait
+
+CMD /wait && node ./app/index.js
+
+# docker build -t node-starter:prod .
+# docker run -v ${PWD}:/var/node-starter-prod -v /var/node-starter-prod/node_modules -p 6435:6435 --rm node-starter-prod:dev

@@ -1,22 +1,22 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import * as fs from 'fs';
 
 dotenv.config();
 
-let configPath: string;
+const paths: any = {
+	test: '../../../.env.test',
+	dev: '../../../.env',
+	production: '../../.env.prod',
+};
 
-switch (process.env.NODE_ENV) {
-	case 'test':
-		configPath = path.resolve(__dirname, '../../.env.test');
-		break;
-	case 'production':
-		configPath = path.resolve(__dirname, '../../.env.prod');
-		break;
-	default:
-		configPath = path.resolve(__dirname, '../../.env');
+const configPath: string = path.resolve(__dirname, paths[process.env.NODE_ENV || 'dev']);
+
+const envConfig: dotenv.DotenvParseOutput = dotenv.parse(fs.readFileSync(configPath));
+
+for (const k in envConfig) {
+	process.env[k] = envConfig[k];
 }
-
-dotenv.config({ path: configPath });
 
 const e: any = process.env;
 

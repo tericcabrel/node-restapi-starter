@@ -16,6 +16,8 @@ export const uploadAvatar: any = multer({
 	storage: storageAvatar,
 	limits: { fileSize: 2 * 1024 * 1024 },
 	fileFilter(req: any, file: any, callback: (error: Error | null, acceptFile: boolean) => void): void {
+		// console.log('File => ', file);
+		// console.log('Req => ', req);
 		const extension: boolean = ['.png', '.jpg', '.jpeg'].indexOf(path.extname(file.originalname).toLowerCase()) >= 0;
 		const mimeType: boolean = file.mimetype.indexOf('image') >= 0;
 

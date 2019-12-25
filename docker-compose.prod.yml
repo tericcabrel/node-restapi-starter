@@ -1,17 +1,16 @@
 version: "2"
 services:
   server:
-    container_name: node-starter
+    container_name: node-starter-prod
     restart: always
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     volumes:
-      - ./:/var/node-starter
-      - ./node_modules:/var/node-starter/node_modules
-    env_file: .env
+      - ~/Desktop/CODING/Docker/volumes/node-starter-prod/uploads:/var/node-starter-prod/public/uploads
+    env_file: ./build/.env.prod
     ports:
-      - "7010:7010"
+      - "6435:6435"
     links:
       - mongodb
       - redisdb
@@ -20,33 +19,32 @@ services:
       - redisdb
     environment:
       WAIT_HOSTS: redisdb:6379, mongodb:27017
+      NODE_ENV: production
     networks:
-      - nodstnetwork
+      - nodsprodtnetwork
   mongodb:
-    container_name: node-starter-mongo
+    container_name: node-starter-prod-mongo
     image: mongo
     volumes:
-      - ~/Desktop/CODING/Docker/volumes/node-starter/mongo:/data/db
+      - ~/Desktop/CODING/Docker/volumes/node-starter-prod/mongo:/data/db
     ports:
       - "27000:27017"
-    env_file: .env
+    env_file: ./build/.env.prod
     environment:
       - MONGO_INITDB_ROOT_USERNAME=$DB_USER
       - MONGO_INITDB_ROOT_PASSWORD=$DB_PASSWORD
       - MONGO_INITDB_DATABASE=$DB_NAME
     networks:
-      - nodstnetwork
+      - nodsprodtnetwork
   redisdb:
-    container_name: node-starter-redis
+    container_name: node-starter-prod-redis
     image: redis
     volumes:
-      - ~/Desktop/CODING/Docker/volumes/node-starter/redis:/data/db
+      - ~/Desktop/CODING/Docker/volumes/node-starter-prod/redis:/data/db
     ports:
       - "6479:6379"
     networks:
-      - nodstnetwork
+      - nodsprodtnetwork
 networks:
-  nodstnetwork:
+  nodsprodtnetwork:
     driver: bridge
-volumes:
-  postgres:
