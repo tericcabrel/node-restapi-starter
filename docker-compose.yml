@@ -26,7 +26,7 @@ services:
     container_name: node-starter-mongo
     image: mongo
     volumes:
-      - /Users/zegeek/Desktop/CODING/Docker/volumes/node-starter/mongo:/data/db
+      - ~/Desktop/CODING/Docker/volumes/node-starter/mongo:/data/db
     ports:
       - "27000:27017"
     env_file: .env
@@ -40,7 +40,7 @@ services:
     container_name: node-starter-redis
     image: redis
     volumes:
-      - /Users/zegeek/Desktop/CODING/Docker/volumes/node-starter/redis:/data/db
+      - ~/Desktop/CODING/Docker/volumes/node-starter/redis:/data/db
     ports:
       - "6479:6379"
     networks:
@@ -48,3 +48,5 @@ services:
 networks:
   nodstnetwork:
     driver: bridge
+volumes:
+  postgres:
