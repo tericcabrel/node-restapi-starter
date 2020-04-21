@@ -1,6 +1,6 @@
-import * as nodemailer from 'nodemailer';
-import * as path from 'path';
-import * as fs from 'fs';
+import nodemailer from 'nodemailer';
+import path from 'path';
+import fs from 'fs';
 import handlebars from 'handlebars';
 import * as Mail from 'nodemailer/lib/mailer';
 
