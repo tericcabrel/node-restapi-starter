@@ -69,3 +69,4 @@ uploads
 package-lock.json
 yarn.lock
 build
+.scannerwork
