@@ -8,6 +8,7 @@ sonar-scanner \
   -Dsonar.typescript.tsconfigPath=tsconfig.json \
   -Dsonar.inclusions="app/**/*" \
   -Dsonar.exclusions="app/tests/**/*, app/core/mailer/templates/**/*" \
+  -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
 
 # Pass the token of the project as the first argument when executing this file
 # Example:
